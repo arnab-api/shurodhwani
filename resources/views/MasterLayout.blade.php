@@ -57,13 +57,17 @@
         <div class="logo-icon text-center">
           <a href="/">S </a>
         </div>
+        <div class="hugeGap"></div>
         <div class="left-side-inner">
           <ul class="nav nav-pills nav-stacked custom-nav">
-            <li class="active"><a href=""><i class="lnr lnr-home"></i><span>Home</span></a></li>
-            <li><a href=""><i class="lnr lnr-users"></i> <span>Artists</span></a></li>
-            <li><a href=""><i class="lnr lnr-music-note"></i> <span>Albums</span></a></li>
-            <li class="menu-list"><a href=""><i class="lnr lnr-heart"></i>  <span>My Favourities</span></a></li>
-            <li class="menu-list"><a href=""><i class="fa fa-thumb-tack"></i><span>Contact</span></a></li>
+            
+            <li><a href="/allArtists"><i class="lnr lnr-users"></i> <span>Artists</span></a></li>
+            <li><a href="/albumList"><i class="lnr lnr-music-note"></i> <span>Albums</span></a></li>
+            @guest
+            @else
+            <li><a href=""><i class="lnr lnr-heart"></i>  <span>My Favourities</span></a></li>
+            <li><a href=""><i class="lnr lnr-film-play"></i>  <span>My Playlists</span></a></li>
+            @endguest
           </ul>
         </div>
       </div>
@@ -75,11 +79,11 @@
       
       <div class="search_box_div">
         {!! Form::open(
-            array(
-              'method'=>'POST',
-              'action' => 'SearchController@showSearchResult',
-              'novalidate' => 'novalidate',
-              'files' => true)) !!}
+        array(
+        'method'=>'POST',
+        'action' => 'SearchController@showSearchResult',
+        'novalidate' => 'novalidate',
+        'files' => true)) !!}
         <input id="key" class="search_box" type="search" name="id">
         {!! Form::close() !!}
       </div>
@@ -88,8 +92,12 @@
         @guest
         
         <div class="Loginbutton">
-        <a href="{{ route('login') }}">Login</a>
+          <a href="{{ route('login') }}">Login</a>
         </div>
+        <li>
+          <a class="loggedInUserID" href="/rankList">Topchart</a>
+        </li>
+        
         @else
         
         <li>
@@ -100,15 +108,14 @@
         </form>
         <li>
           <a class="loggedInUserID" href="/user/{{Auth::user()->id}}">{{ Auth::user()->name }}</a>
-          <div class="profilePicRoundDiv"><a href="#"><img src="{{asset('').Auth::user()->profilePic}}" class="profilePicRound"></a></div>
+          <div class="profilePicRoundDiv"><a href="/user/{{Auth::user()->id}}"><img src="{{asset('').Auth::user()->profilePic}}" class="profilePicRound"></a></div>
         </li>
         
         <li>
           <a href="/upload"><img src="{{asset('images/upload_icon.png')}}" class="uploadIcon"></a>
         </li>
-
         <li>
-          <a class="loggedInUserID" href="">Topchart</a>
+          <a class="loggedInUserID" href="/rankList">Topchart</a>
         </li>
         
         
@@ -116,16 +123,24 @@
       </div>
       
     </div>
-    <div class="mainContainer">
-      <div>@yield('content')</div>
-    </div>
+
+      <div class="mainContainer"><div>@yield('content')</div></div>
     
     <footer class="footer_div">
       <p class="footer_CR">&copy; Osprishyo. All Rights Reserved</p>
       <a class="footer_MU"><i class="glyphicon glyphicon-earphone"></i>Call : 01XXXXXXXXX&nbsp &nbsp &nbsp &nbsp<i class="glyphicon glyphicon-envelope"></i> Mail : abc@gmail.com</a>
     </footer>
     <script type="text/javascript" src="{{asset('/bootstrap-select-1.12.2/dist/js/bootstrap-select.js')}}"></script>
+    <script type="text/javascript" src="{{asset('/bootstrap-select-1.12.2/dist/js/bootstrap-select.js')}}"></script>
     <script src="{{asset('js/select2.min.js')}}"></script>
+    <script type="text/javascript">
+    $(".select2-selection--multiple").select2();
+    </script>
+    <script>
+    $(document).ready(function () {
+    $('.selectpicker').selectpicker();
+    });
+    </script>
     <script src="{{asset('js/jquery.nicescroll.js')}}"></script>
     <script src="{{asset('js/scripts.js')}}"></script>
     <script src="{{asset('js/bootstrap.js')}}"></script>

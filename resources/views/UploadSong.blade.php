@@ -63,7 +63,7 @@
                         {!! Form::open(
                         array(
                         'method'=>'POST',
-                        'route' => 'audio.store',
+                        'route' => 'album.store',
                         'class' => 'form',
                         'novalidate' => 'novalidate',
                         'files' => true)) !!}
@@ -71,20 +71,26 @@
                         
                         <label class="col-md-4 control-label">Album Title</label>
                         <div class="col-md-6">
-                            <input id="songTitle" type="text" class="songUploadDiv" name="songTitle" required autofocus>
+                            <input id="songTitle" type="text" class="songUploadDiv" name="albumTitle" required autofocus>
                             <div class="gap"></div>
                         </div>
-                        
-                        <
-                        <label class="col-md-4 control-label">Audio</label>
-                        <div class="col-md-6">
-                            <input id="audio" class="chooseAudio" type="file" name="audio" required autofocus>
-                            <div class="mediumGap"></div>
+                        <div class="clearfix"></div>
+
+
+
+                        <div class="makeAlbumAudioChoose">
+                        <label class="col-md-4 control-label">Select Audio</label>
+                          <select class="select2-selection--multiple" multiple="multiple" name="audio_list[]">
+                              @foreach($uploadedSong as $audio)
+                                <option value={{$audio->_id}}>{{$audio->title}}</option>
+                              @endforeach
+                          </select>
                         </div>
+
+                        <div class="mediumGap"></div>
                         <label class="col-md-4 control-label">Poster</label>
                         <div class="col-md-6">
-                            <input id="songBack" class="chooseAudio" type="file" name="songBack" required autofocus>
-                            <div class="mediumGap"></div>
+                            <input id="songBack" class="chooseAudio" type="file" name="albumBack" required autofocus>
                         </div>
                         
                         <div class="col-md-6">
@@ -97,9 +103,11 @@
                 </div>
             </div>
         </div>
+        <div class="footerGap"></div>
     </div>
 </div>
 </div>
+
 <script type="text/javascript">
 
 $(function() {

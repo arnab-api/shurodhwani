@@ -24,15 +24,16 @@
 
                         <label class="col-md-4 control-label">About Me</label>
                         <div class="col-md-6">
-                            <input id="aboutMe" type="text" class="songUploadDiv" name="aboutMe" value="<?=$user->about_me?>">
+                            <textarea id="aboutMe" class="songUploadDiv" name="aboutMe" value="<?=$user->about_me?>"></textarea>
                             <div class="gap"></div>
                         </div>
                         <label class="col-md-4 control-label">Profile Picture</label>
                         <div class="col-md-6">
                             <input id="proPic" class="chooseAudio" type="file" name="proPic">
+                            <div class="ajaira">(Just leave it if you don't want to change)</div>
                             <div class="mediumGap"></div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="songUploadButton">
                                 <button type="submit" class="btn btn-primary">Update</button>

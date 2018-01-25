@@ -2,7 +2,7 @@
 @section('content')
 <div class="playerContainer">
 	<div class="MP_title">
-		Title
+		{{$playlist_title}}
 	</div>
 	<div class="mediumGap"></div>
 	<div class="MP_Container">
@@ -31,8 +31,8 @@
                     @for($i = 0 ; $i < sizeof($title_arr) ; $i++)
                         <li>
                             <div class="plItem" id="{{$id_arr[$i]}}">
-                                <div class="plNum">{{$i}}.</div>
-                                <div class="plTitle">{{$title_arr[$i]}}</div>
+                                <div class="plNum">{{$i + 1}}.</div>
+                                <div class="plTitle"><a href="/audio/{{$id_arr[$i]}}" target="_blank">{{$title_arr[$i]}}</a></div>
                             </div>
                         </li>
                     @endfor
@@ -75,7 +75,7 @@ jQuery(function ($) {
     if (supportsAudio) {
         var index = 0,
             playing = false,
-            mediaPath = '',
+            mediaPath = {!! json_encode(url('/')) !!} + '/',
             extension = '',
             tracks = playlist,
             trackCount = tracks.length,
@@ -137,6 +137,7 @@ jQuery(function ($) {
                 npTitle.text(tracks[id].name);
                 index = id;
                 audio.src = mediaPath + tracks[id].file + extension;
+                console.log('loaded' , audio.src);
 
                 var iid = id_arr[id];
                 var user_id = -1;

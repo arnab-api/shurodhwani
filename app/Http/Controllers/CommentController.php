@@ -53,7 +53,7 @@ class CommentController extends Controller
         $username = $user->name;
         $created_at = $cmt->created_at;
         $proPc = $user->profilePic;
-        return response()->json(['success'=>'comment added' , 'userName'=>$username , 'tym'=>$created_at , 'proPic'=>$proPc]);
+        return response()->json(['success'=>'comment added' , 'userName'=>$username , 'tym'=>$created_at , 'proPic'=>$proPc , 'id'=>$cmt->_id]);
     }
 
     public function upComment(Request $request)
@@ -79,7 +79,28 @@ class CommentController extends Controller
         return response()->json(['success'=>'comment liked' , 'up'=>$cmt->up]);
     }
 
+    public function downComment(Request $request)
+    {
+        $id = $request->target_id;
+        $user_id = $request->user_id;
 
+        $cmt = Comment::find($id);
+        if($user_id != -1) {
+            $flag = true;
+            foreach($cmt->upDownUsers as $user){
+                if($user == $user_id){
+                    $flag = false;
+                    break;
+                }
+            }
+            if($flag == true){
+                $cmt->down++;
+                $cmt->upDownUsers = array_prepend($cmt->upDownUsers, $user_id);
+                $cmt->save();
+            }
+        }
+        return response()->json(['success'=>'comment disliked' , 'down'=>$cmt->down]);
+    }
     /**
      * Display the specified resource.
      *

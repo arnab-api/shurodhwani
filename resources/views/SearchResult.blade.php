@@ -8,7 +8,7 @@
         <div id="audioDiv">
             @for($i = 0 ; $i<sizeof($allSong) ; $i++)
             <div class="searchResult">
-                <div class="songResultDiv" id="">
+                <div class="songResultDiv" id="" onClick="window.open('/audio/{{$allSong[$i]->id}}','_blank');">
                     <img src="{{asset('').$allSong[$i]->poster}}">
                     <a>{{$allSong[$i]->title}}</a>
                     <div class="clearfix"></div>
@@ -20,6 +20,7 @@
                     <li>
                         <h3>{{$allSong[$i]->rating}}</h3>
                     </li>
+                    <li>| &nbsp {{$allSong[$i]->users_listened}} views</li>
                 </div>
             </div>
             @endfor
@@ -29,21 +30,25 @@
                 <div class="searchResult">
                     <div class="artistResultDiv" id="">
                         <a>{{$tag->name}}</a>
-                    </div>
+                   </div>
+                    <div class="artistTotalSong"><a>{{sizeof($tag->audio_list)}} Songs</a></div>
                 </div>
             @endforeach
         </div>
         <div id="artistDiv">
             @foreach($allArtist as $artist)
             <div class="searchResult">
-                <div class="artistResultDiv" id="">
+                <div class="artistResultDiv" id="" onclick="window.location = '/artist/{{$artist->id}}';">
                     <a>{{$artist->name}}</a>
                 </div>
+                 <div class="artistTotalSong"><a >{{sizeof($artist->audio_list)}} Songs</a></div>
             </div>
             @endforeach
         </div>
     </div>
+    <div class="footerGap"></div>
 </div>
+
 
 <div class="searchResDan">
     <div class="filterBy">
@@ -62,6 +67,7 @@
         </div>
     </div>
 </div>
+
 
 <script type="text/javascript">
 $(function() {

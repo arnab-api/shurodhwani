@@ -23,3 +23,4 @@ Route::post('addToFav', 'UserController@addToFav');
 Route::post('updateRating', 'AudioController@updateRating');
 Route::post('upComment', 'CommentController@upComment');
 Route::post('downComment', 'CommentController@downComment');
+Route::post('paginateComments', 'AudioController@paginateComments');

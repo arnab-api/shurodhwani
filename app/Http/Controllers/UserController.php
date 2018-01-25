@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Audio;
+use App\Album;
+use Auth;
 
 class UserController extends Controller
 {
@@ -95,6 +97,15 @@ class UserController extends Controller
         return view('UserProfile' , compact('user' , 'uploaded_song' , 'recentList' , 'artistArr'));
     }
 
+    public function showAllUploadedSongs($id){
+        $audio_list = Audio::where('added_by' , $id)->paginate(16);
+        return view('UploadedSongList' , compact('audio_list'));
+    }
+    public function showAllUploadedAlbums($id){
+        $album_list = Album::where('addedBy' , $id)->paginate(16);
+        return view('UploadedAlbumList' , compact('album_list'));
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -148,6 +159,42 @@ class UserController extends Controller
         $user->fav_list = $arr;
         $user->save();
         return response()->json(['success'=>'fav_list updated']);
+    }
+
+    public function showFavourites($id){
+        $user = User::find($id);
+        if(Auth::check() == false) return redirect('/');
+        if(Auth::user()->_id != $user->_id) return redirect('/');
+
+        $uploaded_list = $user->fav_list;
+        $audio_arr = [];
+        $id_arr = [];
+        $title_arr = [];
+        $path_arr = [];
+        for($i = 0 ; $i < sizeof($uploaded_list) ; $i++) {
+            //echo $id_arr[$i].'<br>';
+            $audio = Audio::find($uploaded_list[$i]);
+            if($audio == null) continue;
+            //echo $uploaded_list[$i]." ".$audio.'<br>';
+            $id_arr = array_prepend($id_arr , $uploaded_list[$i]);
+            $audio_arr = array_prepend($audio_arr , $audio);
+            $title_arr = array_prepend($title_arr , $audio->title);
+            $path_arr = array_prepend($path_arr , $audio->file_path);
+
+        }
+
+        $id_arr = array_reverse($id_arr);
+        $title_arr = array_reverse($title_arr);
+        $path_arr = array_reverse($path_arr);
+//
+        $playlist_title = "Favourites of ".$user->name;
+
+//        echo $playlist_title.'<br>';
+//        for($i = 0 ; $i < sizeof($audio_arr) ; $i++){
+//            echo $id_arr[$i]." ".$title_arr[$i]." ".$path_arr[$i].'<br>';
+//        }
+
+        return view('MusicPlayer' , compact('id_arr' , 'title_arr' , 'path_arr' , 'playlist_title'));
     }
 
     public function update(Request $request , $id)

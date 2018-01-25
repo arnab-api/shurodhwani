@@ -685,14 +685,14 @@ i.arrow {
   color: gray;
   float: left;
   padding-left: 40px;
-  padding-top: 5px;
+  padding-top: 0px;
 }
 
 .footer_MU {
   color: gray;
   float: right;
   padding-right: 40px;
-  padding-top: 5px;
+  padding-top: 0px;
 }
 
 .registerArea {
@@ -773,6 +773,16 @@ i.arrow {
   margin-top: 20px;
 }
 
+.footerGap{
+  height: 200px;
+  width: 100%;
+}
+
+.fullScreen{
+  width: 100%;
+  height: auto ;
+}
+
 .songUploadDiv {
   margin-left: -100px;
   display: block;
@@ -829,7 +839,6 @@ textarea.songUploadDiv {
 .uploadAlbumDiv {
   height: 60px;
   width: 750px;
-  background-color: red;
   margin-left: 195px;
 }
 
@@ -1037,7 +1046,15 @@ textarea.songUploadDiv {
   z-index: -1;
   position: absolute;
   height: 300px;
-  width: 30%;
+  width: 28%;
+}
+
+.songPosterDiv li{
+  margin-left: 28%;
+  position: absolute;
+  width: 1%;
+  height: 300px;
+  background-color: #f1f1f1;
 }
 
 .recommendationDiv {
@@ -1058,6 +1075,10 @@ textarea.songUploadDiv {
   cursor: pointer;
 }
 
+.reducegap{
+  margin-top: -6px;
+}
+
 .recommendSongDiv img {
   margin-left: 7px;
   position: absolute;
@@ -1066,13 +1087,21 @@ textarea.songUploadDiv {
   width: 50px;
 }
 
-.recommendSongDiv a {
-  text-decoration: none;
+.recommendSongDiv h4 {
   font-size: 16px;
   margin-left: 67px;
   font-weight: 400;
-  color: #eae9ef;
+  color: #3cd1b1;
 }
+
+.recommendSongDiv a{
+  color: #a3aec8;
+  font-size: 16px;
+}
+.recommendSongDiv a:hover{
+  color: #0b8a99;
+}
+
 
 .recommendSongDiv li {
   display: inline;
@@ -1095,6 +1124,10 @@ textarea.songUploadDiv {
   font-size: 15px;
   display: inline;
   margin-left: -50px;
+}
+.recommendSongDiv li{
+  color: #eae9ef;
+  font-size: 15px;
 }
 
 .recommendGap {
@@ -1140,22 +1173,37 @@ textarea.songUploadDiv {
 
 .ratingDiv {
   margin-top: 10px;
-  width: 80px;
+  width: 15%;
   height: 30px;
+  position: relative;
 }
 
-.ratingDiv h5 {
+.ratingstardiv{
+  float: left;
+  width: 40%;
+  height: 100%;
+}
+
+.ratingpointdiv{
+  float: right;
+  width: 60%;
+  height: 100%;
+}
+
+.ratingpointdiv h5 {
+  margin-top: 3px;
+  margin-left: 10px;
   color: white;
-  margin-left: 50%;
+  float: left;
   font-size: 25px;
   font-weight: 600;
 }
 
-.ratingDiv img {
-  margin-left: 1.5%;
-  margin-top: -0.3%;
-  height: 25%;
-  width: 4%;
+.ratingstardiv img {
+  position: absolute;
+  margin-left: 10px;
+  height: 27px;
+  width: 27px;
 }
 
 .audioProfileCommentDiv {
@@ -1195,7 +1243,7 @@ textarea.songUploadDiv {
   height: 1px;
   background-color: #bdbdbd;
   border: none;
-  width: 700px;
+  width: 80%;
   margin-top: 0px;
   margin-left: 65px;
 }
@@ -1503,7 +1551,6 @@ footer  p a:hover {
   position: relative;
   list-style: none;
   overflow: hidden;
-  width: 100%;
   padding: 0;
   margin: 0;
 }
@@ -1518,6 +1565,7 @@ footer  p a:hover {
   z-index: 1;
   height: auto;
   border: 0;
+  width: 100%;
 }
 
 .callbacks .caption {
@@ -1624,8 +1672,8 @@ footer  p a:hover {
 }
 
 .rslides img {
-  width: 850px; 
-  height: 400px;
+  width: 100%; 
+  height: 500px;
   border: 0;
 }
 
@@ -1790,11 +1838,16 @@ a.trend:hover {
 }
 
 .albums img{
-  width: 170px;
+  width: 100%;
   height: 130px;
 }
 
 .content-grid img {
+  
+}
+
+.content-grid:hover img{
+  background-color: #c1c9d2;
 }
 
 .content-grid {
@@ -2138,7 +2191,7 @@ h3.hd-tittle {
   top: 20px;
   left: 10px;
   width: 30%;
-  height: 260px;
+  height: 270px;
 }
 
 .proPicDiv h3{
@@ -2264,7 +2317,7 @@ h3.hd-tittle {
 .filtersDiv{
   margin-top: -18px;
   width: 90%;
-  height: 154px;
+  height: auto;
   background-color: gray;
   text-align: center;
 }
@@ -2275,7 +2328,7 @@ h3.hd-tittle {
 }
 
 .filters h1{
-  padding-top: 6%;  
+  padding-top: 12px;  
   color: white;
   font-size: 20px;
 }
@@ -2498,6 +2551,7 @@ form .stars span {
 
 
 .musicPlayerContainer{
+  width: 71%;
   position: absolute;
   bottom: 0;
   right: 0;
@@ -2505,6 +2559,11 @@ form .stars span {
 
 
 .singleComment{
+  border-radius: 6px;
+  margin-top: -10px;
+  padding-top: 10px;
+  padding-left: 10px; 
+  background-color: white;
   margin-left: 2%;
   width: 96%;
 }
@@ -2537,8 +2596,9 @@ form .stars span {
 }
 
 .commenter h1{
-  font-size: 15px;
-  font-weight: 400;
+  color: gray;
+  font-size: 13px;
+  font-weight: 600;
   margin-top: 0px;
   margin-left: 0px;
 }
@@ -2551,19 +2611,20 @@ form .stars span {
   font-weight: 300;
   margin-left: 60px;
   padding: 3px;
+  padding-bottom: 10px;
 }
 
 .voteDiv{
   margin-top: 12px;
   float: right;
-  width: 40%;
+  width: 90px;
   height: 48px;
 }
 
 .commentTextArea{
   margin-left: 20px;
-  width: 600px;
-  height: 120px;
+  width: 96%;
+  height: 60px;
   padding: 10px;
   font-size: 20px;
 }
@@ -2727,4 +2788,176 @@ form .stars span {
   padding-top: 5px;
   width: 65%;
   overflow: auto;
+}
+
+.artistTotalSong{
+  float: right;
+  margin-top: -28px;
+  margin-right: 30px;
+}
+
+.artistTotalSong a{
+  color: gray;
+}
+
+.albumTotalSong{
+  float: right;
+  margin-top: -33px;
+  margin-right: 30px;
+}
+
+.albumTotalSong h5{
+  font-size: 20px;
+  color: gray;
+}
+
+.listHref{
+  text-decoration: none;
+  color: white;
+  box-shadow: none;
+}
+
+.makeAlbumAudioChoose{
+  height: auto;
+  width: 100%;
+}
+
+.paginationFooter{
+  height: auto;
+  width: 250px;
+  margin-left: 285px;
+  margin-top: 50px;
+}
+
+.paginationFooter li{
+  list-style-type: none;
+  position: relative;
+  display: inline-block;
+  font-size: 18px;
+}
+
+
+.paginationFooter a{
+  font-size: 20px; 
+  text-decoration: none;
+}
+
+.prevPag{
+  padding-left: 13px;
+  padding-right: 13px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.prevPag:hover{
+  background-color: #cae7d7;
+}
+
+.nextPag{
+ 
+  padding-left: 13px;
+  padding-right: 13px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.nextPag:hover{
+  background-color: #cae7d7;
+}
+
+.songUpdateButton{
+  position: absolute;
+  margin-left: 5px;
+  margin-top: -126px;
+}
+
+.songUpdateButton img{
+  height: 20px;
+  width: 20px;
+  background-color: #ecebe4;
+  border-radius: 6px;
+}
+
+.songUpdateButton img:hover{
+  background-color: white;
+  border-radius: 6px;
+  height: 25px;
+  width: 25px;
+}
+
+.songDeleteButton{
+  position: absolute;
+  cursor: pointer;
+}
+
+.songDeleteButton img{
+  margin-left: 10px;
+  margin-top: 10px;
+  height: 40px;
+  width: 40px;
+}
+
+.songDeleteButton img:hover{
+  height: 45px;
+  width: 45px;
+}
+
+.seeAll{
+  font-size: 18px;
+  float: right;
+  margin-right: 20px;
+}
+
+.uploadTitle{
+  text-align: center;
+  padding-top: 15px;
+  height: 60px;
+  width: 750px;
+  float: right;
+  font-size: 20px;
+  font-weight: 600;
+  background-color: #555;
+  border-width: 1px;
+  color: white;
+}
+
+.ajaira{
+  margin-left: -100px;
+}
+
+.createPlaylist{
+  cursor: pointer;
+  position: relative;
+  width: 190px;
+  float: right;
+  margin-right: 20px;
+  margin-top: 10px;
+}
+
+.createPlaylist:hover h3{
+  font-size: 22px
+}
+
+.createPlaylist:hover img{
+  width: 55px;
+  height: 55px;
+}
+
+.createPlaylist h3{
+  display: inline;
+  font-weight: 600;
+  font-size: 20px;
+  color: #0a4b0f;
+}
+
+.createPlaylist img{
+  display: inline;
+  width: 50px;
+  height: 50px;
 }

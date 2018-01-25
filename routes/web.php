@@ -4,6 +4,7 @@ use App\User;
 use App\Audio;
 use App\Tag;
 use App\Comment;
+use App\Artist;
 
 /*
 |--------------------------------------------------------------------------
@@ -122,12 +123,17 @@ Route::get('/query' , function(){
 //        $audio[$i]->rating = 0.0;
 //        $audio[$i]->save();
 //    }
-    $comments = Comment::all();
-    for($i = 0 ; $i < sizeof($comments) ; $i++) {
-        $comments[$i]->up = 0;
-        $comments[$i]->down = 0;
-        $comments[$i]->upDownUsers = [];
-        $comments[$i]->save();
+//    $comments = Comment::all();
+//    for($i = 0 ; $i < sizeof($comments) ; $i++) {
+//        $comments[$i]->up = 0;
+//        $comments[$i]->down = 0;
+//        $comments[$i]->upDownUsers = [];
+//        $comments[$i]->save();
+//    }
+    $allAudio = Audio::all();
+    for($i = 0 ; $i < sizeof($allAudio) ; $i++){
+        if($allAudio[$i]->poster == null) $allAudio[$i]->poster = 'images/defaultMusic.png';
+        $allAudio[$i]->save();
     }
 });
 
@@ -138,8 +144,10 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::resource('audio' , 'AudioController');
+Route::resource('artist' , 'ArtistController');
 Route::resource('search' , 'SearchController');
 Route::resource('user' , 'UserController');
+Route::resource('album' , 'AlbumController');
 Route::post('/upload' , 'AudioController@store');
 
 Route::get('/master', function () {
@@ -174,10 +182,13 @@ Route::get('/showAudio','AudioController@showAudio');
 
 Route::get('/', function () {
 
-    $allSong = Audio::orderBy('users_listened' , 'desc')->get();
+    $allSong = Audio::orderBy('rating' , 'desc')->get();
+    $allSongUsersListened = Audio::orderBy('users_listened' , 'desc')->get();
+    $allSongRating = Audio::orderBy('rating' , 'desc')->get();
 //    $recommendedSong = $allSong;
     //$allSong = Audio::all();
     $limit = 15;
+    $checkPrevious = 30;
     $limit = min(sizeof($allSong) , $limit);
     if(Auth::check() == false){
         $recommendedSong = [];
@@ -187,32 +198,84 @@ Route::get('/', function () {
         $recommendedSong = array_reverse($recommendedSong);
     }
     else{
-//        $user = Auth::user();
-//        $listenedSong = Audio::whereIn('_id' , $user->listen_list)->get();
-//        $map = [];
-//        $allTag = Tag::all();
-//        foreach($allTag as $tag) $map[$tag->name] = 0;
-//        for($i = 0 ; $i < $limit && $i < sizeof($listenedSong) ; $i++){
-//            $song = $listenedSong[$i];
-//            $tags = $song->tag_arr;
-//            foreach($tags as $tg) {
-//                echo $tg.", ";
-//                try {
-//                    $map[$tg]++;
-//                }catch(\Exception $e){}
-//            }
+        $user = Auth::user();
+        $listenedSong = Audio::whereIn('_id' , $user->listen_list)->get();
+        $map = [];
+        $allTag = Tag::all();
+        //echo '<br>';
+        foreach($allTag as $tag) $map[$tag->name] = 0;
+        for($i = 0 ; $i < $checkPrevious && $i < sizeof($listenedSong) ; $i++){
+            $song = $listenedSong[$i];
+            $tags = $song->tag_arr;
+            foreach($tags as $tg) {
+                //echo $tg.", ";
+                try {
+                    $map[$tg]++;
+                }catch(\Exception $e){}
+            }
+            //echo '<br>';
+        }
+        //echo '<br>';
+        //foreach($allTag as $tag) echo $tag->name." ".$map[$tag->name].'<br>';
+
+        $recommendedSong = [];
+        $it = 10;
+        while(sizeof($recommendedSong) < $limit && $it != 0){
+            $max = 0;
+            $maxTag = "Tag";
+            foreach($allTag as $tag){
+                if($map[$tag->name]>$max){
+                    $max = $map[$tag->name];
+                    $maxTag = $tag->name;
+                }
+            }
+            //echo $maxTag." --> ".$max.'<br>';
+            if($max == 0) break;
+            try {
+                $tg = Tag::where('name', $maxTag)->first();
+                $audioList = Audio::whereIn('_id' , $tg->audio_list)->orderBy('rating' , 'desc')->get();
+                for($i = 0 ; $i < 5 && $i < sizeof($audioList); $i++){
+                    if (($key = array_search($audioList[$i], $recommendedSong)) !== false) continue;
+                    $recommendedSong = array_prepend($recommendedSong , $audioList[$i]);
+                    //echo "   => ".$audioList[$i]->title.'<br>';
+                }
+            }catch(\Exception $e){
+                //echo "caught exception".'<br>';
+            }
+            $map[$maxTag] = 0;
+            $it--;
+        }
+
+        $searchLimit = 10;
+        for($i = 0 ; $i < sizeof($allSongUsersListened) && $i < $searchLimit; $i++){
+            if (($key = array_search($allSongUsersListened[$i], $recommendedSong)) !== false) continue;
+            $recommendedSong = array_prepend($recommendedSong , $allSongUsersListened[$i]);
+            //echo "   ==> ".$allSongUsersListened[$i]->title.'<br>';
+        }
+        for($i = 0 ; $i < sizeof($allSongRating) && $i < $searchLimit; $i++){
+            if (($key = array_search($allSongRating[$i], $recommendedSong)) !== false) continue;
+            $recommendedSong = array_prepend($recommendedSong , $allSongRating[$i]);
+            //echo "   ==> ".$allSongRating[$i]->title.'<br>';
+        }
+
+       // echo '<br>';
+        $recommendedSong = array_reverse($recommendedSong);
+//        foreach($recommendedSong as $audio) {
+//            echo $audio->title.'  => ';
+//            foreach($audio->tag_arr as $tg) echo $tg.', ';
 //            echo '<br>';
 //        }
-//        foreach($allTag as $tag) echo $tag->name." ".$map[$tag->name].'<br>';
-        $recommendedSong = [];
-        for($i = 0 ; $i < $limit ; $i++){
-            $recommendedSong = array_prepend($recommendedSong , $allSong[$i]);
-        }
-        $recommendedSong = array_reverse($recommendedSong);
+//        $recommendedSong = [];
+//        for($i = 0 ; $i < $limit ; $i++){
+//            $recommendedSong = array_prepend($recommendedSong , $allSong[$i]);
+//        }
+//        $recommendedSong = array_reverse($recommendedSong);
     }
 
-    $sz = min(sizeof($recommendedSong) , $limit);
-    //echo $sz;
+    shuffle($recommendedSong);
+
+    $sz = sizeof($recommendedSong);
+    //echo '===>'.$sz.'<br>';
     $artist_arr = [];
 
     $lim = 35;
@@ -244,8 +307,9 @@ Route::get('/', function () {
     //echo "found".'<br>';
     $artist_arr = array_reverse($artist_arr);
     //echo sizeof($artist_arr)."<br>";
-    //for($i = 0 ; $i<$limit ; $i++) echo $i." ".$recommendedSong[$i]->title." :: ".$artist_arr[$i]."<br>";
-    return view('HomePage' , compact('recommendedSong' , 'artist_arr'));
+    //for($i = 0 ; $i<$sz ; $i++) echo $i." ".$recommendedSong[$i]->title." :: ".$artist_arr[$i]."<br>";
+    $newReleases = Audio::orderBy('created_at' , 'desc')->take(20)->get();
+    return view('HomePage' , compact('recommendedSong' , 'artist_arr' , 'newReleases'));
 });
 
 Route::get('/temp', function () {
@@ -261,7 +325,18 @@ Route::get('/laravelWelcome', function () {
 });
 
 Route::get('/upload', function () {
-    return view('UploadSong');
+    if(Auth::check() == true){
+        $uploadedSong = [];
+        $user = Auth::user();
+        $upload_list = $user->upload_list;
+        foreach($upload_list as $id){
+            $audio = Audio::find($id);
+            if($audio == null) continue;
+            $uploadedSong = array_prepend($uploadedSong , $audio);
+        }
+        return view('UploadSong' , compact('uploadedSong'));
+    }
+    return redirect('/');
 });
 
 Route::get('/test', function () {
@@ -284,8 +359,7 @@ Route::get('/musicPlayer' , function(){
     $id_arr = array_reverse($id_arr);
 
     $playlist_title = "My Playlist";
-    $test = ['api','mri'];
-    return view('MusicPlayer' , compact('id_arr' , 'title_arr' , 'path_arr' , 'playlist_title' , 'test'));
+    return view('MusicPlayer' , compact('id_arr' , 'title_arr' , 'path_arr' , 'playlist_title'));
 });
 
 Route::get('/updateUserProfile/{id}', 'UserController@viewUpdateUserPage');
@@ -297,3 +371,29 @@ Route::post('/saveEdited' , 'UserController@saveEdited');
 Route::get('ajaxRequest', 'HomeController@ajaxRequest');
 Route::post('ajaxRequest', 'HomeController@ajaxRequestPost');
 Route::post('ajaxTestDelete/{id}', 'HomeController@ajaxTestDelete');
+
+Route::get('/allArtists' , 'ArtistController@showAllArtists');
+Route::get('/rankList' , 'AudioController@showRankList');
+
+Route::get('/showFavourites/{id}' , 'UserController@showFavourites');
+Route::get('/albumList', 'AlbumController@showAll');
+Route::get('/uploadedSongList/{id}', 'UserController@showAllUploadedSongs');
+Route::get('/uploadedAlbumList/{id}', 'UserController@showAllUploadedAlbums');
+
+Route::get('/editSong/{id}', 'AudioController@editSong');
+
+Route::get('/editAlbum', function () {
+    return view('EditAlbum');
+});
+
+Route::get('/showPersonalList', function () {
+    return view('ShowPersonalList');
+});
+
+Route::get('/createPersonalList', function () {
+    return view('CreatePersonalList');
+});
+
+Route::get('/editPersonalList', function () {
+    return view('EditPersonalList');
+});

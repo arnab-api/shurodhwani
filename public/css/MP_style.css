@@ -118,6 +118,14 @@ audio {
 	white-space: nowrap;
 }
 
+.plTitle a{
+	color: white;
+}
+
+.plTitle a:hover{
+	color: lightgray;
+}
+
 .plNum {
 	padding-left: 21px;
 	width: 25px;
@@ -142,7 +150,7 @@ html body {
 
 html audio {
 	margin-left: 9px;
-	width: 561px;
+	width: 100%;
 	margin: 0px auto;
 	margin-bottom: -5px;
 }
@@ -221,6 +229,7 @@ html[data-useragent*="Android"] .plSel, html[data-useragent*="Android"] .plSel:h
 }
 
 .MP_container_1{
+	width: 94%;
 	margin-top: 50px;
-	margin-left: 50px;
+	margin-left: 3%;
 }

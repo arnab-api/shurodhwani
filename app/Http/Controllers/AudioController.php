@@ -66,14 +66,14 @@ class AudioController extends Controller
         }
 
         if($flag == true) {
-            echo $request->audio->getClientOriginalName() . ' ===> <br>';
+            //echo $request->audio->getClientOriginalName() . ' ===> <br>';
             if ($request->audio) {
                 $audio = $request->audio;
                 $ext = $audio->getClientOriginalExtension();
                 if ($ext == 'mp3') {
                     //$name = $audio->getClientOriginalName();
                     $name = $request->songTitle.".".$ext;
-                    echo $name . '<br>';
+                    //echo $name . '<br>';
                     $audio->move('uploadedAudio/' . $user_id, $name);
 
                     $song = new Audio();
@@ -88,16 +88,15 @@ class AudioController extends Controller
                         for($i = 0 ; $i < sizeof($artist_arr) ; $i++){
                             $artist_arr[$i] = trim($artist_arr[$i]);
                         }
-                        $song->artist_arr = $artist_arr;
-
+                        $art_arr = [];
                         for($i = 0 ; $i < sizeof($artist_arr) ; $i++){
-                            echo " ================> ".$artist_arr[$i]." ".strlen($artist_arr[$i]).'<br>';
+                            //echo " ================> ".$artist_arr[$i]." ".strlen($artist_arr[$i]).'<br>';
                             $exp = '/.*'.$artist_arr[$i].'*/i';
                             $artist_match = Artist::where('name' , 'regexp' , $exp)->get();
                             $artist = null;
                             if(sizeof($artist_match) != 0){
                                 foreach($artist_match as $art){
-                                    echo " ------> ".$art->name." ".strlen($art->name).'<br>';
+                                    //echo " ------> ".$art->name." ".strlen($art->name).'<br>';
                                     if(strlen($art->name) == strlen($artist_arr[$i])){
                                         $artist = $art;
                                         break;
@@ -110,11 +109,12 @@ class AudioController extends Controller
                                 $artist->audio_list = [];
                                 $artist->album_list = [];
                                 $artist->description = "No description has been added";
-//                                $artist->save();
                             }
                             $artist->audio_list = array_prepend($artist->audio_list , $song->_id);
+                            $art_arr = array_prepend($art_arr , $artist->name);
                             $artist->save();
                         }
+                        $song->artist_arr = $art_arr;
                     }
                     else $song->artist_arr = [];
 
@@ -123,16 +123,16 @@ class AudioController extends Controller
                         for($i = 0 ; $i < sizeof($tag_arr) ; $i++){
                             $tag_arr[$i] = trim($tag_arr[$i]);
                         }
-                        $song->tag_arr = $tag_arr;
+                        $tagArr = [];
                         if(sizeof($tag_arr) != 0) {
                             for ($i = 0; $i < sizeof($tag_arr); $i++) {
-                                echo "===============> ".$tag_arr[$i]." ".strlen($tag_arr[$i]).'<br>';
+                                //echo "===============> ".$tag_arr[$i]." ".strlen($tag_arr[$i]).'<br>';
                                 $exp = '/.*' . $tag_arr[$i] . '*/i';
                                 $tag_match = Tag::where('name', 'regexp', $exp)->get();
                                 $tag = null;
                                 if (sizeof($tag_match) != 0) {
                                     foreach ($tag_match as $tg) {
-                                        echo "---> ".$tg->name." ".strlen($tg->name).'<br>';
+                                       // echo "---> ".$tg->name." ".strlen($tg->name).'<br>';
                                         if (strlen($tg->name) == strlen($tag_arr[$i])) {
                                             $tag = $tg;
                                             break;
@@ -145,12 +145,13 @@ class AudioController extends Controller
                                     $tag->audio_list = [];
                                     $tag->album_list = [];
                                     $tag->description = "No description has been added";
-//                                $artist->save();
                                 }
                                 $tag->audio_list = array_prepend($tag->audio_list, $song->_id);
+                                $tagArr = array_prepend($tagArr , $tag->name);
                                 $tag->save();
                             }
                         }
+                        $song->tag_arr = $tagArr;
                     }
                     else $song->tag_arr = [];
 
@@ -170,16 +171,20 @@ class AudioController extends Controller
                         $img->move('uploadedAudioBack/' . $user_id, $name);
                         $song->poster = 'uploadedAudioBack/' . $user_id . "/" . $name;
                     }
+                    else{
+                        $song->poster = 'images/defaultMusic.png';
+                    }
                     $song->save();
 
                     $user = User::find($user_id);
                     $user->upload_list = array_prepend($user->upload_list , $song->id);
                     $user->save();
-                    echo "successfully uploaded" . "<br>";
+                    //echo "successfully uploaded" . "<br>";
+                    return redirect('/audio/'.$song->id);
                 } else {
                     echo "uploaded file is not mp3" . '<br>';
                 }
-                echo "Process terminated";
+                //echo "Process terminated";
             } else {
                 echo "No file has been uploaded";
             }
@@ -213,6 +218,7 @@ class AudioController extends Controller
         $song->save();
         return response()->json(['success'=>'rating updated' , 'new_rating'=>$song->rating]);
     }
+
     public function updateHitNumber(Request $request){
         $id = $request->id;
         $audio = Audio::find($id);
@@ -232,28 +238,68 @@ class AudioController extends Controller
         return response()->json(['success'=>'yesss hit number updated' , 'id'=>$audio->_id]);
     }
 
+    public function paginateComments(Request $request)
+    {
+        $id = $request->id;
+        $from = $request->from;
+        $to = $request->to;
+
+        $allComments = Comment::where('target_id' , $id)->orderBy('_id' , 'desc')->get();
+        $commenter = [];
+        $comments = [];
+        for($i = $from ; $i < $to && $i < sizeof($allComments); $i++){
+            $comments = array_prepend($comments , $allComments[$i]);
+            $user = User::find($allComments[$i]->user_id);
+            $commenter = array_prepend($commenter , $user);
+        }
+        $comments = array_reverse($comments);
+        $commenter = array_reverse($commenter);
+        return view('paginateComments' , compact('comments' , 'commenter'));
+    }
+
     /**
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    public function updateHitRouteCall($id){
+        $audio = Audio::find($id);
+        $audio->users_listened += 1;
+        $audio->save();
+
+        if(Auth::check()){
+            $user = Auth::user();
+            $arr = $user->listen_list;
+            if (($key = array_search($id, $arr)) !== false) {
+                unset($arr[$key]);
+            }
+            $user->listen_list = array_prepend($arr , $id);
+            $user->save();
+        }
+    }
+
     public function show($id)
     {
         //
         //echo "Hello ===> ".$id.'<br>';
+
+        $this->updateHitRouteCall($id);
+
         $audio = Audio::find($id);
         $user_id = $audio->added_by;
-        $user = User::find($user_id);
-        $allComments = Comment::where('target_id' , $id)->get();
-        $comments = [];
+        $addedBy = User::find($user_id);
+        $paginateLimit = 7;
+        $comments = Comment::where('target_id' , $id)->orderBy('_id' , 'desc')->get();
+        $commentSize = sizeof($comments);
+        $comments = Comment::where('target_id' , $id)->orderBy('_id' , 'desc')->take($paginateLimit)->get();
         $commenter = [];
-        foreach($allComments as $cmt){
-            $comments = array_prepend($comments , $cmt);
+        foreach($comments as $cmt){
             $user = User::find($cmt->user_id);
             $commenter = array_prepend($commenter , $user);
         }
-
+        $commenter = array_reverse($commenter);
         $title = $audio->title;
         $path = $audio->file_path;
 //        foreach($comments as $cmt) {
@@ -262,14 +308,148 @@ class AudioController extends Controller
         //$comments = array_reverse($comments);
         //echo $audio->rating;
         $fav = 0;
+        $rating = 0.0;
         try{
             $currentUser = Auth::user();
             if (($key = array_search($id, $currentUser->fav_list)) !== false) $fav = 1;
+            $len = sizeof($audio->users_given_rating);
+            for($i = 0 ; $i < $len ; $i++){
+                if($audio->users_given_rating[$i] == $currentUser->id){
+                    $rating = $audio->rating_arr[$i];
+                    break;
+                }
+            }
         }catch(\Exception $e){
 
         }
         //echo $id." ".$currentUser->_id." :: ".$fav;
-        return view('SongProfile' , compact('audio' , 'user' , 'title' , 'path' , 'id' , 'comments' , 'commenter' , 'fav'));
+
+        $recommendedSong = [];
+        $artist_arr = $audio->artist_arr;
+        $tag_arr = $audio->tag_arr;
+
+        $searchArtist = [];
+        $searchTag = [];
+        for($i = 0 ; $i < sizeof($artist_arr) ; $i++){
+            //echo " ================> ".$artist_arr[$i]." ".strlen($artist_arr[$i]).'<br>';
+            $exp = '/.*'.$artist_arr[$i].'*/i';
+            $artist_match = Artist::where('name' , 'regexp' , $exp)->get();
+            $artist = null;
+            if(sizeof($artist_match) != 0){
+                foreach($artist_match as $art){
+                    //echo " ------> ".$art->name." ".strlen($art->name).'<br>';
+                    if(strlen($art->name) == strlen($artist_arr[$i])){
+                        $artist = $art;
+                        break;
+                    }
+                }
+            }
+            if($artist !== null) {
+                //echo ">>> ".$artist->name.'<br>';
+                $searchArtist = array_prepend($searchArtist , $artist);
+            }
+        }
+        //echo '<br>';
+        for($i = 0 ; $i < sizeof($tag_arr) ; $i++){
+           // echo " ================> ".$tag_arr[$i]." ".strlen($tag_arr[$i]).'<br>';
+            $exp = '/.*'.$tag_arr[$i].'*/i';
+            $tag_match = Tag::where('name' , 'regexp' , $exp)->get();
+            $tag = null;
+            if(sizeof($tag_match) != 0){
+                foreach($tag_match as $tg){
+                    //echo " ------> ".$tg->name." ".strlen($tg->name).'<br>';
+                    if(strlen($tg->name) == strlen($tag_arr[$i])){
+                        $tag = $tg;
+                        break;
+                    }
+                }
+            }
+            if($tag !== null) {
+                //echo ">>> ".$tag->name.'<br>';
+                $searchTag = array_prepend($searchTag , $tag);
+            }
+        }
+
+        foreach($searchTag as $tag){
+            $id_arr = $tag->audio_list;
+            $limit = 7;
+            $audio_list = Audio::whereIn('_id' , $id_arr)->orderBy('rating' , 'desc')->get();
+            foreach ($audio_list as $aaa){
+                $limit--;
+                if($limit == 0) break;
+                if (($key = array_search($aaa, $recommendedSong)) !== false) continue;
+                $recommendedSong = array_prepend($recommendedSong , $aaa);
+            }
+        }
+        foreach($searchArtist as $art){
+            $id_arr = $art->audio_list;
+            $limit = 7;
+            $audio_list = Audio::whereIn('_id' , $id_arr)->orderBy('rating' , 'desc')->get();
+            foreach ($audio_list as $aaa){
+                $limit--;
+                if($limit == 0) break;
+                if (($key = array_search($aaa, $recommendedSong)) !== false) continue;
+                $recommendedSong = array_prepend($recommendedSong , $aaa);
+            }
+        }
+
+        $allSongUsersListened = Audio::orderBy('users_listened' , 'desc')->get();
+        $allSongRating = Audio::orderBy('rating' , 'desc')->get();
+        $searchLimit = 3;
+        for($i = 0 ; $i < sizeof($allSongUsersListened) && $i < $searchLimit; $i++){
+            if (($key = array_search($allSongUsersListened[$i], $recommendedSong)) !== false) continue;
+            $recommendedSong = array_prepend($recommendedSong , $allSongUsersListened[$i]);
+            //echo "   ==> ".$allSongUsersListened[$i]->title.'<br>';
+        }
+        for($i = 0 ; $i < sizeof($allSongRating) && $i < $searchLimit; $i++){
+            if (($key = array_search($allSongRating[$i], $recommendedSong)) !== false) continue;
+            $recommendedSong = array_prepend($recommendedSong , $allSongRating[$i]);
+            //echo "   ==> ".$allSongRating[$i]->title.'<br>';
+        }
+
+        if (($key = array_search($audio, $recommendedSong)) !== false) {
+            unset($recommendedSong[$key]);
+        }
+        shuffle($recommendedSong);
+        $sz = sizeof($recommendedSong);
+        //echo '===>'.$sz.'<br>';
+        $artist_arr = [];
+
+        $lim = 35;
+        for($i = 0 ; $i < $sz; $i++){
+            $art = "";
+            $song = $recommendedSong[$i];
+            for($j = 0 ; $j < sizeof($song->artist_arr) ; $j++){
+                if(strlen($art) + strlen($song->artist_arr[$j]) > $lim){
+                    for($k = 0 ; $k < strlen($song->artist_arr[$j]) ; $k++){
+                        $art = $art.$song->artist_arr[$j][$k];
+                        if(strlen($art) == $lim){
+                            $art = $art." ....";
+                            break;
+                        }
+                    }
+                }
+                else{
+                    if($j > 0) $art = $art." ";
+                    $art = $art.$song->artist_arr[$j];
+                    if($j < sizeof($song->artist_arr) - 1) $art = $art.",";
+                }
+            }
+            $artist_arr = array_prepend($artist_arr , $art);
+//        echo $i." ".$song->title.' ==> '.$artist_arr[$i]." :: ";
+//        foreach($song->artist_arr as $art) echo $art.", ";
+//        echo '<br>';
+        }
+
+        //for($i = 0 ; $i < sizeof($recommendedSong) ; $i++) echo " ---> ".$recommendedSong[$i]->title.'<br>';
+
+        //echo "found".'<br>';
+        $artist_arr = array_reverse($artist_arr);
+
+        $from = 0;
+        $user = $addedBy;
+        //echo "User::" . $addedBy;
+        return view('SongProfile' , compact('from' , 'audio' , 'user' , 'title' , 'path' , 'id' , 'comments' , 'commenter' , 'fav' , 'rating' , 'recommendedSong' , 'artist_arr' , 'commentSize'));
     }
 
     public function showAudio(){
@@ -283,15 +463,121 @@ class AudioController extends Controller
         return view('SongProfile' , compact('audio' , 'user' , 'title' , 'path' , 'id'));
     }
 
+    public function showRankList()
+    {
+        $recommendedSong = Audio::orderBy('rating' , 'desc')->get();
+
+        $sz = sizeof($recommendedSong);
+        //echo '===>'.$sz.'<br>';
+        $artist_arr = [];
+
+        $lim = 35;
+        for($i = 0 ; $i < $sz; $i++){
+            $art = "";
+            $song = $recommendedSong[$i];
+            for($j = 0 ; $j < sizeof($song->artist_arr) ; $j++){
+                if(strlen($art) + strlen($song->artist_arr[$j]) > $lim){
+                    for($k = 0 ; $k < strlen($song->artist_arr[$j]) ; $k++){
+                        $art = $art.$song->artist_arr[$j][$k];
+                        if(strlen($art) == $lim){
+                            $art = $art." ....";
+                            break;
+                        }
+                    }
+                }
+                else{
+                    if($j > 0) $art = $art." ";
+                    $art = $art.$song->artist_arr[$j];
+                    if($j < sizeof($song->artist_arr) - 1) $art = $art.",";
+                }
+            }
+            $artist_arr = array_prepend($artist_arr , $art);
+//        echo $i." ".$song->title.' ==> '.$artist_arr[$i]." :: ";
+//        foreach($song->artist_arr as $art) echo $art.", ";
+//        echo '<br>';
+        }
+
+        //echo "found".'<br>';
+        $artist_arr = array_reverse($artist_arr);
+
+        $ratingSorted = $recommendedSong;
+        $rating_artist_arr = $artist_arr;
+
+        $recommendedSong = Audio::orderBy('users_listened' , 'desc')->get();
+
+        $sz = sizeof($recommendedSong);
+        //echo '===>'.$sz.'<br>';
+        $artist_arr = [];
+
+        $lim = 35;
+        for($i = 0 ; $i < $sz; $i++){
+            $art = "";
+            $song = $recommendedSong[$i];
+            for($j = 0 ; $j < sizeof($song->artist_arr) ; $j++){
+                if(strlen($art) + strlen($song->artist_arr[$j]) > $lim){
+                    for($k = 0 ; $k < strlen($song->artist_arr[$j]) ; $k++){
+                        $art = $art.$song->artist_arr[$j][$k];
+                        if(strlen($art) == $lim){
+                            $art = $art." ....";
+                            break;
+                        }
+                    }
+                }
+                else{
+                    if($j > 0) $art = $art." ";
+                    $art = $art.$song->artist_arr[$j];
+                    if($j < sizeof($song->artist_arr) - 1) $art = $art.",";
+                }
+            }
+            $artist_arr = array_prepend($artist_arr , $art);
+//        echo $i." ".$song->title.' ==> '.$artist_arr[$i]." :: ";
+//        foreach($song->artist_arr as $art) echo $art.", ";
+//        echo '<br>';
+        }
+
+        $listenSorted = $recommendedSong;
+        $listen_artist_arr = $artist_arr;
+
+        return view('RankList' , compact('ratingSorted' , 'rating_artist_arr' , 'listenSorted' , 'listen_artist_arr'));
+    }
+
+    public function editSong($id)
+    {
+        $song = Audio::find($id);
+        $artist_arr = "";
+        if($song->artist_arr) {
+            for($i = 0 ; $i < sizeof($song->artist_arr) ; $i++) {
+                $artist = $song->artist_arr[$i];
+                $artist_arr = $artist_arr.$artist;
+                if($i < sizeof($song->artist_arr) - 1) $artist_arr = $artist_arr.", ";
+            }
+        }
+
+        $tag_arr = "";
+        if($song->tag_arr) {
+            for($i = 0 ; $i < sizeof($song->tag_arr) ; $i++) {
+                $tag = $song->tag_arr[$i];
+                $tag_arr = $tag_arr.$tag;
+                if($i < sizeof($song->tag_arr) - 1) $tag_arr = $tag_arr.", ";
+            }
+        }
+
+        return view('EditSong' , compact('song' , 'artist_arr' , 'tag_arr'));
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id , Request $request)
     {
         //
+        echo "edit song called ".$id.'<br>';
+        echo $request->songTitle.'<br>';
+        echo $request->songArtist.'<br>';
+        echo $request->songGenre.'<br>';
     }
 
     /**

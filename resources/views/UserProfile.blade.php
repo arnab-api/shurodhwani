@@ -57,23 +57,45 @@
 			<div class="profileListDiv">
 				<a href={{"/updateUserProfile/".$user->_id}} class="profileUpdateButton">Update</a>
 			</div>
-				@endif
+			@endif
 		</div>
 	</div>
 	<div class="albums">
 		<div class="tittle-head">
-			<h3 class="tittle">Uploads</h3>
-			<a href="index.html"><h4 class="tittle">See all</h4></a>
+			<h3 class="tittle">Uploaded Songs</h3>
 			<div class="clearfix"> </div>
 		</div>
 		@foreach($uploaded_song as $song)
 			<div class="col-md-3 content-grid">
-				<a class="play-icon popup-with-zoom-anim" href="#small-dialog"><img src={{asset('').$song->poster}} title="allbum-name"></a>
+				<a class="play-icon popup-with-zoom-anim" href="#small-dialog">
+					<img src={{asset('').$song->poster}}>
+					<div class="songUpdateButton"><img src="{{asset('images/update.png')}}" title="Update" ></div>
+				</a>
 				<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">{{$song->title}}</a>
 			</div>
 		@endforeach
 		<div class="clearfix"> </div>
+		<a class="seeAll" href="">See All</a>
 	</div>
+
+	<div class="albums">
+		<div class="tittle-head">
+			<h3 class="tittle">Uploaded Albums</h3>
+			<div class="clearfix"> </div>
+		</div>
+		@foreach($uploaded_song as $song)
+			<div class="col-md-3 content-grid">
+				<a class="play-icon popup-with-zoom-anim" href="#small-dialog">
+					<img src={{asset('').$song->poster}}>
+					<div class="songUpdateButton"><img src="{{asset('images/update.png')}}" ></div>
+				</a>
+				<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">{{$song->title}}</a>
+			</div>
+		@endforeach
+		<div class="clearfix"> </div>
+		<a class="seeAll" href="">See All</a>
+	</div>
+
 	<div class="hugeGap"></div>
 </div>
 <div class="danPash">
@@ -83,9 +105,11 @@
 			<li>Recently Played</li>
 		</div>
 		@for($i=0; $i<sizeof($recentList); $i++)
-		<div class="recommendSongDiv">
+		<div class="recommendSongDiv" onClick="window.open('/audio/{{$recentList[$i]->id}}','_blank');">
 			<img src={{asset('').$recentList[$i]->poster}}>
-			<a href="">{{$recentList[$i]->title}}</a>
+			<div class="reducegap"></div>
+			<h4 href="">{{$recentList[$i]->title}}</h4>
+			<div class="reducegap"></div>
 			<div class="clearfix"></div>
 			<li>{{$artistArr[$i]}}</li>
 			<div class="clearfix"></div>
@@ -95,6 +119,7 @@
 			<li>
 				<h3>{{$recentList[$i]->rating}}</h3>
 			</li>
+			<li>| &nbsp {{$recentList[$i]->users_listened}} views</li>
 		</div>
 		<div class="recommendGap"></div>
 		@endfor
