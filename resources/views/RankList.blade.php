@@ -2,11 +2,16 @@
 @section('content')
 <div class="searchResBam">
     <div class="searchResTitle">
+        
+        @if(sizeof($ratingSorted)<100)
+        {{sizeof($ratingSorted)}} Songs ( All)
+        @else
         Top 100
+        @endif
     </div>
     <div class="searchResDiv">
         <div id="rankDiv1">
-            @for($i = 0 ; $i<sizeof($ratingSorted) ; $i++)
+            @for($i = 0 ; $i<min(sizeof($ratingSorted), 100) ; $i++)
             <div class="searchResult">
                 <div class="songResultDiv" id="" onClick="window.open('/audio/{{$ratingSorted[$i]->id}}','_blank');">
                     <img src="{{asset('').$ratingSorted[$i]->poster}}">
@@ -28,7 +33,7 @@
         </div>
 
         <div id="rankDiv2" style="display: none">
-            @for($i = 0 ; $i<sizeof($listenSorted) ; $i++)
+            @for($i = 0 ; $i<min(sizeof($listenSorted), 100) ; $i++)
             <div class="searchResult">
                 <div class="songResultDiv" id="" onClick="window.open('/audio/{{$listenSorted[$i]->id}}','_blank');">
                     <img src="{{asset('').$listenSorted[$i]->poster}}">

@@ -28,7 +28,7 @@
         <div id="albumDiv">
             @foreach($allTag as $tag)
                 <div class="searchResult">
-                    <div class="artistResultDiv" id="">
+                    <div class="artistResultDiv" id="" >
                         <a>{{$tag->name}}</a>
                    </div>
                     <div class="artistTotalSong"><a>{{sizeof($tag->audio_list)}} Songs</a></div>

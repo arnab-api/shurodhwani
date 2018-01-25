@@ -2,7 +2,7 @@
 @section('content')
 <div class="playerContainer">
 	<div class="MP_title">
-		Artists
+		{{sizeof($allArtists)}} Artists
 	</div>
 	<div class="mediumGap"></div>
 	<div class="MP_Container">
@@ -15,7 +15,13 @@
                             <div class="plItem" id="">
                                 <div class="plNum">.</div>
                                 <div class="plTitle">{{$allArtists[$i]->name}}</div>
-                                <div class="artistTotalSong"><a>{{sizeof($allArtists[$i]->audio_list)}} Songs</a></div>
+                                <div class="artistTotalSong"><a>{{sizeof($allArtists[$i]->audio_list)}}
+                                @if(sizeof($allArtists[$i]->audio_list) < 2)
+                                Song
+                                @else 
+                                Songs
+                                @endif
+                                </a></div>
                             </div>
                         </li>
                     @endfor

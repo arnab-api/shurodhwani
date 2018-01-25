@@ -543,6 +543,11 @@ class AudioController extends Controller
 
     public function editSong($id)
     {
+        if(Auth::check() == false) return redirect('/');
+        $song = Audio::find($id);
+        if($song == null) return redirect('/');
+        if(Auth::user()->_id !== $song->added_by) return redirect('/');
+
         $song = Audio::find($id);
         $artist_arr = "";
         if($song->artist_arr) {
@@ -571,13 +576,9 @@ class AudioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id , Request $request)
+    public function edit($id)
     {
         //
-        echo "edit song called ".$id.'<br>';
-        echo $request->songTitle.'<br>';
-        echo $request->songArtist.'<br>';
-        echo $request->songGenre.'<br>';
     }
 
     /**
@@ -590,6 +591,144 @@ class AudioController extends Controller
     public function update(Request $request, $id)
     {
         //
+        if(Auth::check() == false) return redirect('/');
+        $song = Audio::find($id);
+        if($song == null) return redirect('/');
+        if(Auth::user()->_id !== $song->added_by) return redirect('/');
+
+        echo "edit song called ".$id.'<br>';
+        echo $request->songTitle.'<br>';
+        echo $request->songArtist.'<br>';
+        echo $request->songGenre.'<br>';
+
+
+        $song->title = $request->songTitle;
+        $user_id = Auth::user()->_id;
+
+            //echo $request->audio->getClientOriginalName() . ' ===> <br>';
+        foreach ($song->artist_arr as $prevArt){
+            $exp = '/.*'.$prevArt.'*/i';
+            $artist_match = Artist::where('name' , 'regexp' , $exp)->get();
+            $artist = null;
+            if(sizeof($artist_match) != 0){
+                foreach($artist_match as $art){
+                    //echo " ------> ".$art->name." ".strlen($art->name).'<br>';
+                    if(strlen($art->name) == strlen($prevArt)){
+                        $artist = $art;
+                        break;
+                    }
+                }
+            }
+            if($artist == null) continue;
+            $arr = $artist->audio_list;
+            if (($key = array_search($id, $arr)) !== false) {
+                unset($arr[$key]);
+            }
+            $artist->audio_list = $arr;
+            $artist->save();
+        }
+        if ($request->songArtist != null){
+            $artist_arr = explode( ',' , $request->songArtist);
+            for($i = 0 ; $i < sizeof($artist_arr) ; $i++){
+                $artist_arr[$i] = trim($artist_arr[$i]);
+            }
+            $art_arr = [];
+            for($i = 0 ; $i < sizeof($artist_arr) ; $i++){
+                //echo " ================> ".$artist_arr[$i]." ".strlen($artist_arr[$i]).'<br>';
+                $exp = '/.*'.$artist_arr[$i].'*/i';
+                $artist_match = Artist::where('name' , 'regexp' , $exp)->get();
+                $artist = null;
+                if(sizeof($artist_match) != 0){
+                    foreach($artist_match as $art){
+                        //echo " ------> ".$art->name." ".strlen($art->name).'<br>';
+                        if(strlen($art->name) == strlen($artist_arr[$i])){
+                            $artist = $art;
+                            break;
+                        }
+                    }
+                }
+                if($artist == null){
+                    $artist = new Artist();
+                    $artist->name = $artist_arr[$i];
+                    $artist->audio_list = [];
+                    $artist->album_list = [];
+                    $artist->description = "No description has been added";
+                }
+                $artist->audio_list = array_prepend($artist->audio_list , $song->_id);
+                $art_arr = array_prepend($art_arr , $artist->name);
+                $artist->save();
+            }
+            $song->artist_arr = $art_arr;
+        }
+        else $song->artist_arr = [];
+
+        foreach ($song->tag_arr as $prevTag){
+            $exp = '/.*'.$prevTag.'*/i';
+            $tag_match = Tag::where('name' , 'regexp' , $exp)->get();
+            $tag = null;
+            if(sizeof($tag_match) != 0){
+                foreach($tag_match as $tg){
+                    //echo " ------> ".$art->name." ".strlen($art->name).'<br>';
+                    if(strlen($tg->name) == strlen($prevTag)){
+                        $tag = $tg;
+                        break;
+                    }
+                }
+            }
+            if($tag == null) continue;
+            $arr = $tag->audio_list;
+            if (($key = array_search($id, $arr)) !== false) {
+                unset($arr[$key]);
+            }
+            $tag->audio_list = $arr;
+            $tag->save();
+        }
+        if ($request->songGenre != null){
+            $tag_arr = explode( ',' , $request->songGenre);
+            for($i = 0 ; $i < sizeof($tag_arr) ; $i++){
+                $tag_arr[$i] = trim($tag_arr[$i]);
+            }
+            $tagArr = [];
+            if(sizeof($tag_arr) != 0) {
+                for ($i = 0; $i < sizeof($tag_arr); $i++) {
+                    //echo "===============> ".$tag_arr[$i]." ".strlen($tag_arr[$i]).'<br>';
+                    $exp = '/.*' . $tag_arr[$i] . '*/i';
+                    $tag_match = Tag::where('name', 'regexp', $exp)->get();
+                    $tag = null;
+                    if (sizeof($tag_match) != 0) {
+                        foreach ($tag_match as $tg) {
+                            // echo "---> ".$tg->name." ".strlen($tg->name).'<br>';
+                            if (strlen($tg->name) == strlen($tag_arr[$i])) {
+                                $tag = $tg;
+                                break;
+                            }
+                        }
+                    }
+                    if ($tag == null) {
+                        $tag = new Tag();
+                        $tag->name = $tag_arr[$i];
+                        $tag->audio_list = [];
+                        $tag->album_list = [];
+                        $tag->description = "No description has been added";
+                    }
+                    $tag->audio_list = array_prepend($tag->audio_list, $song->_id);
+                    $tagArr = array_prepend($tagArr , $tag->name);
+                    $tag->save();
+                }
+            }
+            $song->tag_arr = $tagArr;
+        }
+        else $song->tag_arr = [];
+
+        if($request->songBack != null){
+            $img = $request->songBack;
+            $name = $img->getClientOriginalName();
+            $img->move('uploadedAudioBack/' . $user_id, $name);
+            $song->poster = 'uploadedAudioBack/' . $user_id . "/" . $name;
+        }
+        $song->save();
+
+        return redirect('/audio/'.$song->id);
     }
 
     /**

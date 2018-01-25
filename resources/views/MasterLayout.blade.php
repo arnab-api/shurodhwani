@@ -65,7 +65,7 @@
             <li><a href="/albumList"><i class="lnr lnr-music-note"></i> <span>Albums</span></a></li>
             @guest
             @else
-            <li><a href=""><i class="lnr lnr-heart"></i>  <span>My Favourities</span></a></li>
+            <li><a href="/showFavourites/{{Auth::user()->id}}"><i class="lnr lnr-heart"></i>  <span>My Favourities</span></a></li>
             <li><a href=""><i class="lnr lnr-film-play"></i>  <span>My Playlists</span></a></li>
             @endguest
           </ul>
@@ -128,7 +128,7 @@
     
     <footer class="footer_div">
       <p class="footer_CR">&copy; Osprishyo. All Rights Reserved</p>
-      <a class="footer_MU"><i class="glyphicon glyphicon-earphone"></i>Call : 01XXXXXXXXX&nbsp &nbsp &nbsp &nbsp<i class="glyphicon glyphicon-envelope"></i> Mail : abc@gmail.com</a>
+      <div class="footer_MU"><i class="glyphicon glyphicon-earphone"></i>Call : 01XXXXXXXXX&nbsp &nbsp &nbsp &nbsp<i class="glyphicon glyphicon-envelope"></i> Mail : abc@gmail.com</div>
     </footer>
     <script type="text/javascript" src="{{asset('/bootstrap-select-1.12.2/dist/js/bootstrap-select.js')}}"></script>
     <script type="text/javascript" src="{{asset('/bootstrap-select-1.12.2/dist/js/bootstrap-select.js')}}"></script>

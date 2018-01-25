@@ -14,8 +14,8 @@
                     <div class="panel-body" id="uploadSong">
                         {!! Form::open(
                         array(
-                        'method'=>'POST',
-                        'route' => 'audio.store',
+                        'method'=>'PUT',
+                        'route' => ['audio.update' , Request::segment(2)],
                         'class' => 'form',
                         'novalidate' => 'novalidate',
                         'files' => true)) !!}
@@ -27,13 +27,13 @@
                             <div class="gap"></div>
                         </div>
                         
-                        <label class="col-md-4 control-label">Artist</label>
+                        <label class="col-md-4 control-label">Artist(s)</label>
                         <div class="col-md-6">
                             <input id="songArtist" type="text" class="songUploadDiv" name="songArtist" required autofocus value='<?php echo $artist_arr;?>'>
                             
                             <div class="gap"></div>
                         </div>
-                        <label class="col-md-4 control-label">Genre</label>
+                        <label class="col-md-4 control-label">Genre(s)</label>
                         <div class="col-md-6">
                             <input id="songGenre" type="text" class="songUploadDiv" name="songGenre" required autofocus value='<?php echo $tag_arr;?>'>
                             <div class="mediumGap"></div>

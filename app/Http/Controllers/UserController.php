@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\UserCustomizedList;
 use Illuminate\Http\Request;
 use App\User;
 use App\Audio;
@@ -98,12 +99,19 @@ class UserController extends Controller
     }
 
     public function showAllUploadedSongs($id){
+        $user = User::find($id);
         $audio_list = Audio::where('added_by' , $id)->paginate(16);
-        return view('UploadedSongList' , compact('audio_list'));
+        return view('UploadedSongList' , compact('audio_list', 'user'));
     }
     public function showAllUploadedAlbums($id){
+        $user = User::find($id);
         $album_list = Album::where('addedBy' , $id)->paginate(16);
-        return view('UploadedAlbumList' , compact('album_list'));
+        return view('UploadedAlbumList' , compact('album_list', 'user'));
+    }
+    public function showAllCustomizedLists($id){
+        $user = User::find($id);
+        $album_list = UserCustomizedList::where('addedBy' , $id)->paginate(16);
+        return view('ShowPersonalList' , compact('album_list', 'user'));
     }
 
     /**

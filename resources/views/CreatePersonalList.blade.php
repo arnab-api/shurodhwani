@@ -14,7 +14,7 @@
                         {!! Form::open(
                         array(
                         'method'=>'POST',
-                        'route' => 'audio.store',
+                        'route' => 'customizedList.store',
                         'class' => 'form',
                         'novalidate' => 'novalidate',
                         'files' => true)) !!}
@@ -22,7 +22,7 @@
                         
                         <label class="col-md-4 control-label">Playlist Title</label>
                         <div class="col-md-6">
-                            <input id="songTitle" type="text" class="songUploadDiv" name="songTitle" required autofocus>
+                            <input id="songTitle" type="text" class="songUploadDiv" name="albumTitle" required autofocus>
                             <div class="gap"></div>
                         </div>
                         <div class="clearfix"></div>
@@ -31,19 +31,20 @@
                         
                         <div class="makeAlbumAudioChoose">
                             <label class="col-md-4 control-label">Select Audio</label>
-                            <select class="select2-selection--multiple" multiple="multiple">
-                                <option value="architecture">Architecture</option>
-                                <option value="forest">Forest</option>
-                                <option value="green">Green</option>
-                                <option value="heritage">Heritage</option>
-                                <option value="hills">Hills</option>
-                                <option value="lake">Lake</option>
-                                <option value="river">River</option>
-                                <option value="riverside">Riverside</option>
-                                <option value="sea">Sea</option>
+                            <select class="select2-selection--multiple" multiple="multiple" name="audio_list[]">
+                                @foreach($audio_list as $audio)
+                                    <option value={{$audio->_id}}>{{$audio->title}}</option>
+                                @endforeach
                             </select>
                         </div>
-                        
+
+                        <div class="mediumGap"></div>
+                        <label class="col-md-4 control-label">Poster</label>
+                        <div class="col-md-6">
+                            <input id="songBack" class="chooseAudio" type="file" name="albumBack" required autofocus>
+                        </div>
+                        <div class="clearfix"></div>
+
                         <div class="col-md-6">
                             <div class="songUploadButton">
                                 <button type="submit" class="btn btn-primary">Create</button>

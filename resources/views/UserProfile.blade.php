@@ -65,17 +65,26 @@
 			<h3 class="tittle">Uploaded Songs</h3>
 			<div class="clearfix"> </div>
 		</div>
-		@foreach($uploaded_song as $song)
+		@for($i=0; $i<sizeof($uploaded_song); $i++)
 			<div class="col-md-3 content-grid">
-				<a class="play-icon popup-with-zoom-anim" href="#small-dialog">
-					<img src={{asset('').$song->poster}}>
-					<div class="songUpdateButton"><img src="{{asset('images/update.png')}}" title="Update" ></div>
+					<img src={{asset('').$uploaded_song[$i]->poster}} onClick="window.open('/audio/{{$uploaded_song[$i]->id}}','_blank');" >
+					@if(Auth::check() == true && Auth::user()->_id == $user->_id)
+					<div class="songUpdateButton" onclick="window.location = '/editSong/{{$uploaded_song[$i]->id}}';">
+						<img src="{{asset('images/update.png')}}" title="Update">
+					</div>
+					@endif
+				
+				<a class="button play-icon popup-with-zoom-anim" href="/audio/{{$uploaded_song[$i]->id}}" target="_blank">
+				@if(strlen($uploaded_song[$i]->title) > 15)
+						{{substr($uploaded_song[$i]->title , 0 , 12)}}...
+					@else
+						{{$uploaded_song[$i]->title}}
+					@endif
 				</a>
-				<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">{{$song->title}}</a>
 			</div>
-		@endforeach
+		@endfor
 		<div class="clearfix"> </div>
-		<a class="seeAll" href="">See All</a>
+		<a class="seeAll" href="/uploadedSongList/{{$user->_id}}">See All</a>
 	</div>
 
 	<div class="albums">
@@ -87,7 +96,9 @@
 			<div class="col-md-3 content-grid">
 				<a class="play-icon popup-with-zoom-anim" href="#small-dialog">
 					<img src={{asset('').$song->poster}}>
+					@if(Auth::check() == true && Auth::user()->_id == $user->_id)
 					<div class="songUpdateButton"><img src="{{asset('images/update.png')}}" ></div>
+					@endif
 				</a>
 				<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">{{$song->title}}</a>
 			</div>
@@ -104,7 +115,7 @@
 		<div class="suggestions">
 			<li>Recently Played</li>
 		</div>
-		@for($i=0; $i<sizeof($recentList); $i++)
+		@for($i=0; $i<min(sizeof($recentList), 15); $i++)
 		<div class="recommendSongDiv" onClick="window.open('/audio/{{$recentList[$i]->id}}','_blank');">
 			<img src={{asset('').$recentList[$i]->poster}}>
 			<div class="reducegap"></div>

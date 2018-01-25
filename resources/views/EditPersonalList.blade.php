@@ -14,8 +14,8 @@
                     <div class="panel-body" id="MakeAlbum">
                         {!! Form::open(
                         array(
-                        'method'=>'POST',
-                        'route' => 'audio.store',
+                        'method'=>'PATCH',
+                        'route' => ['customizedList.update' , Request::segment(2)],
                         'class' => 'form',
                         'novalidate' => 'novalidate',
                         'files' => true)) !!}
@@ -23,25 +23,19 @@
                         
                         <label class="col-md-4 control-label">Playlist Title</label>
                         <div class="col-md-6">
-                            <input id="songTitle" type="text" class="songUploadDiv" name="songTitle" required autofocus value="Previous Title">
+                            <input id="songTitle" type="text" class="songUploadDiv" name="albumTitle" required autofocus value='<?php echo $album->title;?>'>
                             <div class="gap"></div>
                         </div>
                         <div class="clearfix"></div>
-                        
-                        
-                        
+
+
+
                         <div class="makeAlbumAudioChoose">
-                            <label class="col-md-4 control-label">Select Audio</label>
-                            <select class="select2-selection--multiple" multiple="multiple" id="selectBox">
-                                <option value="architecture">Architecture</option>
-                                <option value="forest">Forest</option>
-                                <option value="green">Green</option>
-                                <option value="heritage">Heritage</option>
-                                <option value="hills">Hills</option>
-                                <option value="lake">Lake</option>
-                                <option value="river">River</option>
-                                <option value="riverside">Riverside</option>
-                                <option value="sea">Sea</option>
+                            <label class="col-md-4 control-label">Select Audio(s)</label>
+                            <select class="select2-selection--multiple" multiple="multiple" id="selectBox" name="audio_list[]">
+                                @foreach($uploadedSong as $audio)
+                                    <option value={{$audio->_id}}>{{$audio->title}}</option>
+                                @endforeach
                             </select>
                         </div>
                         
@@ -65,7 +59,7 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    $('#selectBox').val(['green', 'heritage', 'architecture', 'forest']);
+    $('#selectBox').val({!! json_encode($id_arr) !!});
     $('#selectBox').trigger('change');
 });
 

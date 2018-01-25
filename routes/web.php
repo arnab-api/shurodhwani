@@ -148,6 +148,8 @@ Route::resource('artist' , 'ArtistController');
 Route::resource('search' , 'SearchController');
 Route::resource('user' , 'UserController');
 Route::resource('album' , 'AlbumController');
+Route::resource('customizedList' , 'CustomizedListController');
+
 Route::post('/upload' , 'AudioController@store');
 
 Route::get('/master', function () {
@@ -379,21 +381,7 @@ Route::get('/showFavourites/{id}' , 'UserController@showFavourites');
 Route::get('/albumList', 'AlbumController@showAll');
 Route::get('/uploadedSongList/{id}', 'UserController@showAllUploadedSongs');
 Route::get('/uploadedAlbumList/{id}', 'UserController@showAllUploadedAlbums');
-
 Route::get('/editSong/{id}', 'AudioController@editSong');
-
-Route::get('/editAlbum', function () {
-    return view('EditAlbum');
-});
-
-Route::get('/showPersonalList', function () {
-    return view('ShowPersonalList');
-});
-
-Route::get('/createPersonalList', function () {
-    return view('CreatePersonalList');
-});
-
-Route::get('/editPersonalList', function () {
-    return view('EditPersonalList');
-});
+Route::get('/editAlbum/{id}', 'AlbumController@editAlbum');
+Route::get('/showPersonalList/{id}', 'UserController@showAllCustomizedLists');
+Route::get('/editPersonalList/{id}', 'CustomizedListController@editList');

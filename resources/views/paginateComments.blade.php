@@ -4,7 +4,7 @@
             <img src={{asset('').$commenter[$i]->profilePic}}>
         </div>
         <div class="commenter">
-            <a href="">{{$commenter[$i]->name}}</a>
+            <a href="/user/{{$commenter[$i]->_id}}">{{$commenter[$i]->name}}</a>
             <h1>{{$comments[$i]->created_at}}</h1>
         </div>
 

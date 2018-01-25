@@ -29,13 +29,13 @@
                             <div class="gap"></div>
                         </div>
                         
-                        <label class="col-md-4 control-label">Artist</label>
+                        <label class="col-md-4 control-label">Artist(s)</label>
                         <div class="col-md-6">
                             <input id="songArtist" type="text" class="songUploadDiv" name="songArtist" required autofocus>
                             
                             <div class="gap"></div>
                         </div>
-                        <label class="col-md-4 control-label">Genre</label>
+                        <label class="col-md-4 control-label">Genre(s)</label>
                         <div class="col-md-6">
                             <input id="songGenre" type="text" class="songUploadDiv" name="songGenre" required autofocus>
                             <div class="mediumGap"></div>
@@ -79,7 +79,7 @@
 
 
                         <div class="makeAlbumAudioChoose">
-                        <label class="col-md-4 control-label">Select Audio</label>
+                        <label class="col-md-4 control-label">Select Audio(s)</label>
                           <select class="select2-selection--multiple" multiple="multiple" name="audio_list[]">
                               @foreach($uploadedSong as $audio)
                                 <option value={{$audio->_id}}>{{$audio->title}}</option>
@@ -87,12 +87,14 @@
                           </select>
                         </div>
 
+                        
+
                         <div class="mediumGap"></div>
                         <label class="col-md-4 control-label">Poster</label>
                         <div class="col-md-6">
                             <input id="songBack" class="chooseAudio" type="file" name="albumBack" required autofocus>
                         </div>
-                        
+                        <div class="clearfix"></div>
                         <div class="col-md-6">
                             <div class="songUploadButton">
                                 <button type="submit" class="btn btn-primary">Upload</button>

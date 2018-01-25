@@ -685,14 +685,14 @@ i.arrow {
   color: gray;
   float: left;
   padding-left: 40px;
-  padding-top: 0px;
+  padding-top: 7px;
 }
 
 .footer_MU {
   color: gray;
   float: right;
   padding-right: 40px;
-  padding-top: 0px;
+  padding-top: 7px;
 }
 
 .registerArea {
@@ -1453,28 +1453,6 @@ textarea.songUploadDiv {
   z-index: 90;
 }
 
-footer {
-  background: #EA57A3;
-  padding: 12px;
-  width: 100%;
-  border-top: 1px solid #423D3E;
-  text-align: center;
-  position: fixed;
-  bottom: 0;
-}
-
-footer  p {
-  color: #fff;
-  font-size: 1em;
-}
-
-footer  p a {
-  color: #111;
-}
-
-footer  p a:hover {
-  text-decoration: underline;
-}
 
 .show-grid [class^=col-] {
   background: #fff;
@@ -2885,6 +2863,7 @@ form .stars span {
 }
 
 .songUpdateButton img:hover{
+  cursor: pointer;
   background-color: white;
   border-radius: 6px;
   height: 25px;

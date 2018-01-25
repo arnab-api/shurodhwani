@@ -85,10 +85,16 @@
 					<div class="clearfix"> </div>
 				</div>
 
-				@for($i=0; $i<sizeof($newReleases) && $i < 8; $i++)
+				@for($i=0; $i<min(sizeof($newReleases), 12); $i++)
 				<div class="col-md-3 content-grid" onClick="window.open('audio/{{$newReleases[$i]->id}}','_blank');">
-					<a class="play-icon popup-with-zoom-anim" href=""><img src="{{asset('').$newReleases[$i]->poster}}" title={{$newReleases[$i]->title}}></a>
-					<a class="button play-icon popup-with-zoom-anim" href="">{{$newReleases[$i]->title}}</a>
+					<a class="play-icon popup-with-zoom-anim" href=""><img src="{{asset('').$newReleases[$i]->poster}}"></a>
+					<a class="button play-icon popup-with-zoom-anim" href="">
+					@if(strlen($newReleases[$i]->title) > 15)
+						{{substr($newReleases[$i]->title , 0 , 12)}}...
+					@else
+						{{$newReleases[$i]->title}}
+					@endif
+					</a>
 				</div>
 				@endfor
 				<div class="clearfix"> </div>
@@ -100,7 +106,7 @@
 				<div class="suggestions">
 					<li>Recommended</li>
 				</div>
-				@for($i=0; $i<sizeof($recommendedSong); $i++)
+				@for($i=0; $i<min(sizeof($recommendedSong), 15); $i++)
 				
 				<div class="recommendSongDiv" id="songButton" onClick="window.open ('audio/{{$recommendedSong[$i]->id}}', '_blank');">
 					<img src="{{asset('').$recommendedSong[$i]->poster}}">

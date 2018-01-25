@@ -21,9 +21,10 @@
 
         <div class="songProfileHeader">
             <h3>{{$audio->title}}</h3>
-            <a href="">Shreekanto Acharya</a>
-            <a href="">S. D Burman</a>
-            <a href="">Anjan Dutt</a>
+
+            @for($i=0; $i<sizeof($audio->artist_arr); $i++)
+                <a href="">{{$audio->artist_arr[$i]}}</a>
+            @endfor
             <div class="ratingDiv">
                 <div class="ratingstardiv"><img src="{{asset('images/starIcon.png')}}"></div>
                 <div class="ratingpointdiv"><h5 id="rating">{{$audio->rating}}</h5></div>
@@ -51,7 +52,7 @@
             <img src="{{asset('').$user->profilePic}}">
         </div>
         <div class="commenter">
-            <a href="">{{$user->name}}</a>
+            <a href="/user/{{$user->id}}">{{$user->name}}</a>
             <h1>{{$user->created_at}}</h1>
         </div>
     </div>
@@ -259,7 +260,7 @@
                 add = add + '<div class="commentProPic" id="newComment">';
                 add = add + '</div>';
                 add = add + '<div class="commenter">';
-                add = add + '<a href="">'+data.userName+'</a>';
+                add = add + '<a href="/user/'+user_id+'">'+data.userName+'</a>';
                 add = add + '<h1>' + data.tym.date + '</h1>';
                 add = add + '</div>';
 //
