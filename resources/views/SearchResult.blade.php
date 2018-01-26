@@ -28,10 +28,16 @@
         <div id="albumDiv">
             @foreach($allTag as $tag)
                 <div class="searchResult">
-                    <div class="artistResultDiv" id="" >
+                    <div class="artistResultDiv" id="" onclick="window.location = '/tag/{{$tag->id}}';">
                         <a>{{$tag->name}}</a>
                    </div>
-                    <div class="artistTotalSong"><a>{{sizeof($tag->audio_list)}} Songs</a></div>
+                    <div class="artistTotalSong"><a style="text-decoration: none">{{sizeof($tag->audio_list)}}
+                            @if(sizeof($tag->audio_list) < 2)
+                                Song
+                            @else
+                                Songs
+                            @endif
+                        </a></div>
                 </div>
             @endforeach
         </div>
@@ -41,7 +47,13 @@
                 <div class="artistResultDiv" id="" onclick="window.location = '/artist/{{$artist->id}}';">
                     <a>{{$artist->name}}</a>
                 </div>
-                 <div class="artistTotalSong"><a >{{sizeof($artist->audio_list)}} Songs</a></div>
+                 <div class="artistTotalSong"><a style="text-decoration: none" >{{sizeof($artist->audio_list)}}
+                         @if(sizeof($artist->audio_list) < 2)
+                             Song
+                         @else
+                             Songs
+                         @endif
+                     </a></div>
             </div>
             @endforeach
         </div>
@@ -59,7 +71,7 @@
             <h1>Audios</h1>
         </div>
         <div class="filters" id="albumFilter">
-            <h1>Tags</h1>
+            <h1>Genres</h1>
         </div>
         
         <div class="filters" id="artistFilter">

@@ -24,7 +24,7 @@
 					&nbsp Contrib.
 				</div>
 				<div class="profileListDescr">
-					+30
+					{{$point}}
 				</div>
 			</div>
 			
@@ -65,7 +65,7 @@
 			<h3 class="tittle">Uploaded Songs</h3>
 			<div class="clearfix"> </div>
 		</div>
-		@for($i=0; $i<sizeof($uploaded_song); $i++)
+		@for($i=0; $i<sizeof($uploaded_song) && $i < 8; $i++)
 			<div class="col-md-3 content-grid">
 					<img src={{asset('').$uploaded_song[$i]->poster}} onClick="window.open('/audio/{{$uploaded_song[$i]->id}}','_blank');" >
 					@if(Auth::check() == true && Auth::user()->_id == $user->_id)
@@ -92,19 +92,26 @@
 			<h3 class="tittle">Uploaded Albums</h3>
 			<div class="clearfix"> </div>
 		</div>
-		@foreach($uploaded_song as $song)
+		@for($i=0; $i<sizeof($album_list) && $i < 8; $i++)
 			<div class="col-md-3 content-grid">
-				<a class="play-icon popup-with-zoom-anim" href="#small-dialog">
-					<img src={{asset('').$song->poster}}>
-					@if(Auth::check() == true && Auth::user()->_id == $user->_id)
-					<div class="songUpdateButton"><img src="{{asset('images/update.png')}}" ></div>
+				<img src={{asset('').$album_list[$i]->poster}} onClick="window.open('/album/{{$album_list[$i]->id}}','_blank');" >
+				@if(Auth::check() == true && Auth::user()->_id == $user->_id)
+					<div class="songUpdateButton" onclick="window.location = '/editAlbum/{{$album_list[$i]->id}}';">
+						<img src="{{asset('images/update.png')}}" title="Update">
+					</div>
+				@endif
+
+				<a class="button play-icon popup-with-zoom-anim" href="/album/{{$album_list[$i]->id}}" target="_blank">
+					@if(strlen($album_list[$i]->title) > 15)
+						{{substr($album_list[$i]->title , 0 , 12)}}...
+					@else
+						{{$album_list[$i]->title}}
 					@endif
 				</a>
-				<a class="button play-icon popup-with-zoom-anim" href="#small-dialog">{{$song->title}}</a>
 			</div>
-		@endforeach
+		@endfor
 		<div class="clearfix"> </div>
-		<a class="seeAll" href="">See All</a>
+		<a class="seeAll" href="/uploadedAlbumList/{{$user->_id}}">See All</a>
 	</div>
 
 	<div class="hugeGap"></div>

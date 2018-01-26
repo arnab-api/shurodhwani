@@ -63,10 +63,11 @@
             
             <li><a href="/allArtists"><i class="lnr lnr-users"></i> <span>Artists</span></a></li>
             <li><a href="/albumList"><i class="lnr lnr-music-note"></i> <span>Albums</span></a></li>
+            <li><a href="/allTags"><i class="lnr lnr-tag"></i> <span>Genres</span></a></li>
             @guest
             @else
             <li><a href="/showFavourites/{{Auth::user()->id}}"><i class="lnr lnr-heart"></i>  <span>My Favourities</span></a></li>
-            <li><a href=""><i class="lnr lnr-film-play"></i>  <span>My Playlists</span></a></li>
+            <li><a href="/showPersonalList/{{Auth::user()->id}}"><i class="lnr lnr-film-play"></i>  <span>My Playlists</span></a></li>
             @endguest
           </ul>
         </div>

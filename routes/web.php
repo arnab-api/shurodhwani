@@ -148,6 +148,7 @@ Route::resource('artist' , 'ArtistController');
 Route::resource('search' , 'SearchController');
 Route::resource('user' , 'UserController');
 Route::resource('album' , 'AlbumController');
+Route::resource('tag' , 'TagController');
 Route::resource('customizedList' , 'CustomizedListController');
 
 Route::post('/upload' , 'AudioController@store');
@@ -311,7 +312,10 @@ Route::get('/', function () {
     //echo sizeof($artist_arr)."<br>";
     //for($i = 0 ; $i<$sz ; $i++) echo $i." ".$recommendedSong[$i]->title." :: ".$artist_arr[$i]."<br>";
     $newReleases = Audio::orderBy('created_at' , 'desc')->take(20)->get();
-    return view('HomePage' , compact('recommendedSong' , 'artist_arr' , 'newReleases'));
+
+    $trending = Audio::orderBy('created_at' , 'desc')->take(40)->orderBy('users_listened' , 'desc')->take(5)->get();
+
+    return view('HomePage' , compact('recommendedSong' , 'artist_arr' , 'newReleases' , 'trending' ));
 });
 
 Route::get('/temp', function () {
@@ -375,6 +379,7 @@ Route::post('ajaxRequest', 'HomeController@ajaxRequestPost');
 Route::post('ajaxTestDelete/{id}', 'HomeController@ajaxTestDelete');
 
 Route::get('/allArtists' , 'ArtistController@showAllArtists');
+Route::get('/allTags' , 'TagController@showAllTags');
 Route::get('/rankList' , 'AudioController@showRankList');
 
 Route::get('/showFavourites/{id}' , 'UserController@showFavourites');
@@ -385,3 +390,7 @@ Route::get('/editSong/{id}', 'AudioController@editSong');
 Route::get('/editAlbum/{id}', 'AlbumController@editAlbum');
 Route::get('/showPersonalList/{id}', 'UserController@showAllCustomizedLists');
 Route::get('/editPersonalList/{id}', 'CustomizedListController@editList');
+
+Route::get('/deleteAudio/{id}' , 'AudioController@deleteAudio');
+Route::get('/deleteAlbum/{id}' , 'AlbumController@deleteAlbum');
+Route::get('/deleteCustomizedList/{id}' , 'CustomizedListController@deleteAlbum');

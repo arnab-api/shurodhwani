@@ -449,7 +449,50 @@ class AudioController extends Controller
         $from = 0;
         $user = $addedBy;
         //echo "User::" . $addedBy;
-        return view('SongProfile' , compact('from' , 'audio' , 'user' , 'title' , 'path' , 'id' , 'comments' , 'commenter' , 'fav' , 'rating' , 'recommendedSong' , 'artist_arr' , 'commentSize'));
+        $artist_id = [];
+        foreach($audio->artist_arr as $art){
+            $exp = '/.*'.$art.'*/i';
+            $artist_match = Artist::where('name' , 'regexp' , $exp)->get();
+            $artist = null;
+            if(sizeof($artist_match) != 0){
+                foreach($artist_match as $a){
+                    //echo " ------> ".$art->name." ".strlen($art->name).'<br>';
+                    if(strlen($a->name) == strlen($art)){
+                        $artist = $a;
+                        break;
+                    }
+                }
+            }
+            if($artist !== null) {
+                //echo ">>> ".$artist->name.'<br>';
+                $artist_id = array_prepend($artist_id , $artist);
+            }
+        }
+
+        $tag_id = [];
+        foreach($audio->tag_arr as $art){
+            $exp = '/.*'.$art.'*/i';
+            $tag_match = Tag::where('name' , 'regexp' , $exp)->get();
+            $tag = null;
+            if(sizeof($tag_match) != 0){
+                foreach($tag_match as $a){
+                    //echo " ------> ".$art->name." ".strlen($art->name).'<br>';
+                    if(strlen($a->name) == strlen($art)){
+                        $tag = $a;
+                        break;
+                    }
+                }
+            }
+            if($tag !== null) {
+                //echo ">>> ".$artist->name.'<br>';
+                $tag_id = array_prepend($tag_id , $tag);
+            }
+        }
+
+        $artist_id = array_reverse($artist_id);
+        $tag_id = array_reverse($tag_id);
+
+        return view('SongProfile' , compact('from' , 'audio' , 'user' , 'title' , 'path' , 'id' , 'comments' , 'commenter' , 'fav' , 'rating' , 'recommendedSong' , 'artist_arr' , 'commentSize' , 'artist_id' , 'tag_id'));
     }
 
     public function showAudio(){
@@ -740,5 +783,14 @@ class AudioController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function deleteAudio($id){
+        if(Auth::check() == false) return redirect('/');
+        $song = Audio::find($id);
+        if($song == null) return redirect('/');
+        if(Auth::user()->_id !== $song->added_by) return redirect('/');
+
+        $song->delete();
+        return redirect('/');
     }
 }

@@ -101,12 +101,13 @@ class CustomizedListController extends Controller
         $id_arr = [];
         $title_arr = [];
         $path_arr = [];
-        for($i = 0 ; $i < sizeof($uploaded_list) ; $i++) {
+        foreach($uploaded_list as $idd) {
             //echo $id_arr[$i].'<br>';
-            $audio = Audio::find($uploaded_list[$i]);
+
+            $audio = Audio::find($idd);
             if($audio == null) continue;
             //echo $uploaded_list[$i]." ".$audio.'<br>';
-            $id_arr = array_prepend($id_arr , $uploaded_list[$i]);
+            $id_arr = array_prepend($id_arr , $idd);
             $audio_arr = array_prepend($audio_arr , $audio);
             $title_arr = array_prepend($title_arr , $audio->title);
             $path_arr = array_prepend($path_arr , $audio->file_path);
@@ -179,5 +180,15 @@ class CustomizedListController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function deleteAlbum($id){
+        if(Auth::check() == false) return redirect('/');
+        $song = UserCustomizedList::find($id);
+        if($song == null) return redirect('/');
+        if(Auth::user()->_id !== $song->addedBy) return redirect('/');
+
+        $song->delete();
+        return redirect('/');
     }
 }

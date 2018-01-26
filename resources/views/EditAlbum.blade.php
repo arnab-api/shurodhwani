@@ -3,7 +3,7 @@
 <div class="container">
     <div class="registerArea">
         <div class="uploadAlbumDiv">
-            <div class="songDeleteButton"><img src="{{asset('images/delete.png')}}" title="Remove This Album"></div>
+            <div class="songDeleteButton" onclick="window.location = '/deleteAlbum/{{Request::segment(2)}}';"><img src="{{asset('images/delete.png')}}" title="Remove This Album"></div>
             <div class="uploadTitle">
                 Update Album
             </div>

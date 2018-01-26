@@ -13,7 +13,7 @@
 						<div class="reducegap"></div>
 						<h4>{{$albums[$i]->title}}</h4>
 						<div class="reducegap"></div>
-						<li>Created By : <a href="">{{$addedBy[$i]}}</a></li>
+						<li>Created By : <a href="/user/{{$addedBy[$i]->_id}}">{{$addedBy[$i]->name}}</a></li>
 						<div class="clearfix"></div>
 						<li>{{$albums[$i]->created_at}}</li>
 						<div class="albumTotalSong"><h5>{{sizeof($albums[$i]->audio_list)}} 

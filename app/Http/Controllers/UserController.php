@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Comment;
 use App\UserCustomizedList;
 use Illuminate\Http\Request;
 use App\User;
@@ -71,6 +72,7 @@ class UserController extends Controller
         $limit = 40;
         for($i = 0 ; $i<10 && $i<sizeof($user->listen_list) ; $i++) {
             $song = Audio::find($user->listen_list[$i]);
+            if($song == null) continue;
             $recentList = array_prepend($recentList , $song);
             $art = "";
             for($j = 0 ; $j < sizeof($song->artist_arr) ; $j++){
@@ -95,7 +97,21 @@ class UserController extends Controller
         }
         $recentList = array_reverse($recentList);
         $artistArr = array_reverse($artistArr);
-        return view('UserProfile' , compact('user' , 'uploaded_song' , 'recentList' , 'artistArr'));
+
+        $point = sizeof($uploaded_song)*10;
+        $comments = Comment::where('user_id' , $id)->get();
+        $point += sizeof($comments)*3;
+
+        //echo sizeof($comments);
+
+        foreach ($comments as $comment){
+            $point += $comment->up;
+            $point -= $comment->down;
+        }
+
+        $album_list = Album::where('addedBy' , $id)->get();
+
+        return view('UserProfile' , compact('user' , 'uploaded_song' , 'recentList' , 'artistArr' , 'point' , 'album_list'));
     }
 
     public function showAllUploadedSongs($id){
@@ -179,12 +195,13 @@ class UserController extends Controller
         $id_arr = [];
         $title_arr = [];
         $path_arr = [];
-        for($i = 0 ; $i < sizeof($uploaded_list) ; $i++) {
+        foreach($uploaded_list as $idd) {
             //echo $id_arr[$i].'<br>';
-            $audio = Audio::find($uploaded_list[$i]);
+
+            $audio = Audio::find($idd);
             if($audio == null) continue;
             //echo $uploaded_list[$i]." ".$audio.'<br>';
-            $id_arr = array_prepend($id_arr , $uploaded_list[$i]);
+            $id_arr = array_prepend($id_arr , $idd);
             $audio_arr = array_prepend($audio_arr , $audio);
             $title_arr = array_prepend($title_arr , $audio->title);
             $path_arr = array_prepend($path_arr , $audio->file_path);

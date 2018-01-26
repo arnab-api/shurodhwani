@@ -2,7 +2,7 @@
 @section('content')
 <div class="playerContainer">
 	<div class="MP_title">
-		{{sizeof($allArtists)}} Artists
+		{{$title}}
 	</div>
 	<div class="mediumGap"></div>
 	<div class="MP_Container">

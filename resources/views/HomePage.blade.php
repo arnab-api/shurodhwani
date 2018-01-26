@@ -6,33 +6,17 @@
 		<div class="music-left">
 			<div class="callbacks_container">
 				<ul class="rslides callbacks callbacks1" id="slider4">
+					@for($i=0; $i<4 && $i<sizeof($trending); $i++)
 					<li>
 						<div class="banner-info">
-							<a class="trend" href="">TRENDING</a>
+							<a class="trend" >TRENDING</a>
 						</div>
 						<div class="callbacks">
-							<img src="images/metalica1.jpg"  alt="">
-							<a style="font-size: 20px;" href="">Kill'em All</a>
+							<img src="{{asset('').$trending[$i]->poster}}"  alt="">
+							<a style="font-size: 20px;" href="/audio/{{$trending[$i]->id}}">{{$trending[$i]->title}}</a>
 						</div>
 					</li>
-					<li>
-						<div class="banner-info">
-							<a class="trend" href="">TRENDING</a>
-						</div>
-						<div class="banner-img">
-							<img src="images/LPark1.jpg" alt="">
-							<a style="font-size: 20px;" href="">Linkin Park</a>
-						</div>
-					</li>
-					<li>
-						<div class="banner-info">
-							<a class="trend" href="">TRENDING</a>
-						</div>
-						<div class="banner-img">
-							<img src="images/33.jpg" alt="">
-							<a style="font-size: 20px;" href="">Title</a>
-						</div>
-					</li>
+					@endfor
 				</ul>
 			</div>
 			<!--banner-->

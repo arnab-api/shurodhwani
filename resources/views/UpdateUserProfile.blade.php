@@ -24,7 +24,7 @@
 
                         <label class="col-md-4 control-label">About Me</label>
                         <div class="col-md-6">
-                            <textarea id="aboutMe" class="songUploadDiv" name="aboutMe" value="<?=$user->about_me?>"></textarea>
+                            <textarea id="aboutMe" class="songUploadDiv" name="aboutMe">{{$user->about_me}}</textarea>
                             <div class="gap"></div>
                         </div>
                         <label class="col-md-4 control-label">Profile Picture</label>

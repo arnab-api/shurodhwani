@@ -54,12 +54,13 @@ class ArtistController extends Controller
         $id_arr = [];
         $title_arr = [];
         $path_arr = [];
-        for($i = 0 ; $i < sizeof($uploaded_list) ; $i++) {
+        foreach($uploaded_list as $idd) {
             //echo $id_arr[$i].'<br>';
-            $audio = Audio::find($uploaded_list[$i]);
+
+            $audio = Audio::find($idd);
             if($audio == null) continue;
             //echo $uploaded_list[$i]." ".$audio.'<br>';
-            $id_arr = array_prepend($id_arr , $uploaded_list[$i]);
+            $id_arr = array_prepend($id_arr , $idd);
             $audio_arr = array_prepend($audio_arr , $audio);
             $title_arr = array_prepend($title_arr , $audio->title);
             $path_arr = array_prepend($path_arr , $audio->file_path);
@@ -83,7 +84,8 @@ class ArtistController extends Controller
     public function showAllArtists()
     {
         $allArtists = Artist::orderBy('name')->paginate(10);
-        return view('ArtistList' , compact('allArtists'));
+        $title = 'Artists';
+        return view('ArtistList' , compact('allArtists' , 'title'));
     }
 
     /**

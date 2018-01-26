@@ -22,8 +22,8 @@
         <div class="songProfileHeader">
             <h3>{{$audio->title}}</h3>
 
-            @for($i=0; $i<sizeof($audio->artist_arr); $i++)
-                <a href="">{{$audio->artist_arr[$i]}}</a>
+            @for($i=0; $i<sizeof($artist_id); $i++)
+                <a href="/artist/{{$artist_id[$i]->_id}}">{{$artist_id[$i]->name}}</a>
             @endfor
             <div class="ratingDiv">
                 <div class="ratingstardiv"><img src="{{asset('images/starIcon.png')}}"></div>
@@ -44,8 +44,9 @@
 
         <h3>
             Tags :
-            <a href="">Classic</a>
-            <a href="">Rabindra</a>
+            @for($i=0; $i<sizeof($tag_id); $i++)
+                <a href="/tag/{{$tag_id[$i]->_id}}">{{$tag_id[$i]->name}}</a>
+            @endfor
         </h3>
 
         <div class="commentProPic">
@@ -123,7 +124,7 @@
             <li>Suggestions</li>
         </div>
         @for($i=0; $i<15 && $i < sizeof($recommendedSong); $i++)
-        <div class="recommendSongDiv">
+        <div class="recommendSongDiv" onclick="window.location = '/audio/{{$recommendedSong[$i]->id}}';">
             <img src="{{asset('').$recommendedSong[$i]->poster}}">
             <div class="reducegap"></div>
             <h4 href="">{{$recommendedSong[$i]->title}}</h4>
@@ -178,7 +179,7 @@
 
             if(from > 0) $('.prevPag').show();
             else $('.prevPag').hide();
-            if(to > commentSize) $('.nextPag').hide();
+            if(to >= commentSize) $('.nextPag').hide();
             else $('.nextPag').show();
 
             $.ajax({
@@ -213,7 +214,7 @@
 
             if(from > 0) $('.prevPag').show();
             else $('.prevPag').hide();
-            if(to > commentSize) $('.nextPag').hide();
+            if(to >= commentSize) $('.nextPag').hide();
             else $('.nextPag').show();
 
             $.ajax({
