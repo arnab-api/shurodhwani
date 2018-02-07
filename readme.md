@@ -7,47 +7,59 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
 </p>
 
-## About Laravel
+**** OS: Windows 10***
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+## Requirements:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+	Xampp with PHP version >= 7.0
+	mongoDB version >= 3.4.0
+	
+	
+## Configure the project in your machine:
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation give you tools you need to build any application with which you are tasked.
+-	install xampp in C drive.
+	follow these instructions https://www.wikihow.com/Install-XAMPP-for-Windows
 
-## Learning Laravel
+-	install mongoDB in C drive.
+	follow these instructions https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
 
-Laravel has the most extensive and thorough documentation and video tutorial library of any modern web application framework. The [Laravel documentation](https://laravel.com/docs) is thorough, complete, and makes it a breeze to get started learning the framework.
+-	Install MongoDB driver for PHP.
+	goto xampp/php directory (C:\xampp\php)
+	open php.ini and add the line "extension=php_mongodb.dll" 
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 900 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+-	copy the "shurodhwani" folder in "xampp\htdocs\".
 
-## Laravel Sponsors
+-	copy the "dump" folder to "C:\Program Files\MongoDB\Server\3.4\bin" folder. you may need administrator permission to do so.
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](http://patreon.com/taylorotwell):
+-	open command prompt in administrator mode and run the following commands.
+	cd C:\Program Files\MongoDB\Server\3.4\bin
+	mongorestore --db shurodhwani dump\shurodhwani
 
-- **[Vehikl](http://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Styde](https://styde.net)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
+-	Create virtual hosts
+	->	open notepad in administrator mode go to C drive > xampp > apache > conf > extra and open "httpd-vhosts.conf" file
+		now add the following
+		
+		<VirtualHost *:80>
+			DocumentRoot "C:/xampp/htdocs"
+			ServerName localhost
+		</VirtualHost>
 
-## Contributing
+		<VirtualHost *:80>
+			DocumentRoot "C:/xampp/htdocs/shurodhwani/public"
+			ServerName shurodhwani.dev
+		</VirtualHost>
+		
+	->	open notepad in administrator mode go to C drive > windows > system32 > drivers > etc and open "hosts" file 
+		now add the following
+		
+		127.0.0.1       shurodhwani.dev
+	
+	===> Google Chrome does not support url with .dev extension. So, if you want to run this project in Chrome browser then
+		replace "shurodhwani.dev" with "shurodhwani.test" or add another vhost named "shurodhwani.test". 
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+-	run Xampp and start Apache service.
 
-## Security Vulnerabilities
+-	go to C drive and run mongoDB by typing "mongod" command in command prompt.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+-	Open a browser and run the app by typing shurodhwani.dev(shurodhwani.test for Chrome) in url.
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
